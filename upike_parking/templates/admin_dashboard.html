@@ -102,8 +102,32 @@
     <!-- Search Section (for Admin Officers and Parking Officers) -->
     {% if search_form %}
       <div class="upike-card p-6 rounded-2xl mb-6">
-        <h2 class="upike-subtitle text-3xl mb-6" onclick="toggleSection('search-section')">Search Students</h2>
-        <div id="search-section" class="">
+        <h2 class="upike-subtitle text-3xl mb-6 flex items-center justify-between" onclick="toggleSection('search-section')">
+          <span>Search Students</span>
+          <span class="text-sm bg-orange-500 text-white px-3 py-1 rounded-full">{{ students|length if students else 0 }} Results</span>
+        </h2>
+        <div id="search-section" class="space-y-6">
+          <!-- Search Stats -->
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="bg-gray-800 rounded-xl p-4">
+              <h3 class="text-gray-400 text-sm">Total Students</h3>
+              <p class="text-2xl font-bold text-white mt-2">{{ students|length if students else 0 }}</p>
+            </div>
+            <div class="bg-gray-800 rounded-xl p-4">
+              <h3 class="text-gray-400 text-sm">Active Permits</h3>
+              <p class="text-2xl font-bold text-green-400 mt-2">{{ students|selectattr('permit_number')|list|length if students else 0 }}</p>
+            </div>
+            <div class="bg-gray-800 rounded-xl p-4">
+              <h3 class="text-gray-400 text-sm">Registered Vehicles</h3>
+              <p class="text-2xl font-bold text-blue-400 mt-2">{{ students|selectattr('license_plate_number')|list|length if students else 0 }}</p>
+            </div>
+            <div class="bg-gray-800 rounded-xl p-4">
+              <h3 class="text-gray-400 text-sm">Search Filters Used</h3>
+              <p class="text-2xl font-bold text-purple-400 mt-2">{{ search_form|length }}</p>
+            </div>
+          </div>
+
+          <!-- Search Form -->
           <form method="POST" class="space-y-4 mb-6">
             {{ search_form.hidden_tag() }}
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -143,44 +167,65 @@
               </div>
             </div>
             <button type="submit" class="upike-button text-white font-semibold mt-4 hover:shadow-lg transform hover:-translate-y-1 transition duration-300">
-              Search
+              Search Students
             </button>
           </form>
+
+          <!-- Search Results -->
           {% if students %}
-            <div class="overflow-x-auto">
-              <table class="w-full border-collapse text-gray-200 table-hover">
-                <thead>
-                  <tr class="bg-gray-900">
-                    <th class="p-4 text-left font-semibold">ID</th>
-                    <th class="p-4 text-left font-semibold">First Name</th>
-                    <th class="p-4 text-left font-semibold">Last Name</th>
-                    <th class="p-4 text-left font-semibold">Phone Number</th>
-                    <th class="p-4 text-left font-semibold">Permit Number</th>
-                    <th class="p-4 text-left font-semibold">Vehicle Make</th>
-                    <th class="p-4 text-left font-semibold">Vehicle Model</th>
-                    <th class="p-4 text-left font-semibold">Vehicle Color</th>
-                    <th class="p-4 text-left font-semibold">License Plate</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for student in students %}
-                    <tr class="border-b border-gray-700">
-                      <td class="p-4">{{ student.id }}</td>
-                      <td class="p-4">{{ student.first_name }}</td>
-                      <td class="p-4">{{ student.last_name }}</td>
-                      <td class="p-4">{{ student.phone_number }}</td>
-                      <td class="p-4">{{ student.permit_number }}</td>
-                      <td class="p-4">{{ student.make }}</td>
-                      <td class="p-4">{{ student.model }}</td>
-                      <td class="p-4">{{ student.vehicle_color }}</td>
-                      <td class="p-4">{{ student.license_plate_number }}</td>
-                    </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
+            <div class="grid grid-cols-1 gap-4">
+              {% for student in students %}
+                <div class="bg-gray-800 rounded-xl p-6 transition-all hover:bg-gray-700">
+                  <div class="flex flex-col md:flex-row md:items-center justify-between mb-4">
+                    <div class="flex items-center space-x-4">
+                      <div class="bg-gray-700 rounded-full w-12 h-12 flex items-center justify-center">
+                        <span class="text-2xl text-gray-300">#{{ student.id }}</span>
+                      </div>
+                      <div>
+                        <h3 class="text-lg font-semibold text-white">{{ student.first_name }} {{ student.last_name }}</h3>
+                        <p class="text-gray-400 text-sm">{{ student.phone_number }}</p>
+                      </div>
+                    </div>
+                    <div class="mt-4 md:mt-0">
+                      <span class="px-4 py-2 rounded-full text-sm font-medium bg-blue-500/20 text-blue-300">
+                        Permit #{{ student.permit_number }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Vehicle Details -->
+                  <div class="bg-gray-900/50 rounded-lg p-4">
+                    <h4 class="text-sm font-medium text-gray-400 mb-3">Vehicle Information</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div>
+                        <p class="text-sm text-gray-400">Make</p>
+                        <p class="text-lg font-semibold text-white">{{ student.make }}</p>
+                      </div>
+                      <div>
+                        <p class="text-sm text-gray-400">Model</p>
+                        <p class="text-lg font-semibold text-white">{{ student.model }}</p>
+                      </div>
+                      <div>
+                        <p class="text-sm text-gray-400">Color</p>
+                        <p class="text-lg font-semibold text-white">{{ student.vehicle_color }}</p>
+                      </div>
+                      <div>
+                        <p class="text-sm text-gray-400">License Plate</p>
+                        <p class="text-lg font-semibold text-white">{{ student.license_plate_number }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
             </div>
           {% else %}
-            <p class="text-gray-400 text-center py-6">No students found.</p>
+            <div class="text-center py-12 bg-gray-800 rounded-xl">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              <h3 class="text-xl font-medium text-gray-400">No Students Found</h3>
+              <p class="text-gray-500 mt-2">Try adjusting your search criteria</p>
+            </div>
           {% endif %}
         </div>
       </div>
@@ -188,71 +233,139 @@
 
     <!-- Ticket Management Section -->
     <div class="upike-card p-6 rounded-2xl mb-6">
-      <h2 class="upike-subtitle text-3xl mb-6" onclick="toggleSection('ticket-section')">Ticket Management</h2>
-      <div id="ticket-section" class="">
+      <h2 class="upike-subtitle text-3xl mb-6 flex items-center justify-between" onclick="toggleSection('ticket-section')">
+        <span>Ticket Management</span>
+        <span class="text-sm bg-orange-500 text-white px-3 py-1 rounded-full">{{ all_tickets|length }} Tickets</span>
+      </h2>
+      <div id="ticket-section" class="space-y-6">
+        <!-- Ticket Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div class="bg-gray-800 rounded-xl p-4">
+            <h3 class="text-gray-400 text-sm">Total Tickets</h3>
+            <p class="text-2xl font-bold text-white mt-2">{{ all_tickets|length }}</p>
+          </div>
+          <div class="bg-gray-800 rounded-xl p-4">
+            <h3 class="text-gray-400 text-sm">Pending Payment</h3>
+            <p class="text-2xl font-bold text-yellow-400 mt-2">{{ all_tickets|selectattr('status', 'equalto', 'pending')|list|length }}</p>
+          </div>
+          <div class="bg-gray-800 rounded-xl p-4">
+            <h3 class="text-gray-400 text-sm">Paid Tickets</h3>
+            <p class="text-2xl font-bold text-green-400 mt-2">{{ all_tickets|selectattr('status', 'equalto', 'paid')|list|length }}</p>
+          </div>
+          <div class="bg-gray-800 rounded-xl p-4">
+            <h3 class="text-gray-400 text-sm">Total Amount</h3>
+            <p class="text-2xl font-bold text-blue-400 mt-2">${{ '%.2f'|format(all_tickets|sum(attribute='amount')) }}</p>
+          </div>
+        </div>
+
+        <!-- Issue Ticket Form -->
         {% if ticket_form %}
-          <form method="POST" class="space-y-4 mb-6">
-            {{ ticket_form.hidden_tag() }}
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label class="block text-gray-300 mb-2">{{ ticket_form.student_id.label }}</label>
-                {{ ticket_form.student_id(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
+          <div class="bg-gray-800 rounded-xl p-6">
+            <h3 class="text-lg font-semibold text-white mb-4">Issue New Ticket</h3>
+            <form method="POST" class="space-y-4">
+              {{ ticket_form.hidden_tag() }}
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label class="block text-gray-300 mb-2">{{ ticket_form.student_id.label }}</label>
+                  {{ ticket_form.student_id(class="w-full p-3 border rounded-lg bg-gray-900 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
+                </div>
+                <div>
+                  <label class="block text-gray-300 mb-2">{{ ticket_form.reason.label }}</label>
+                  {{ ticket_form.reason(class="w-full p-3 border rounded-lg bg-gray-900 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
+                </div>
+                <div>
+                  <label class="block text-gray-300 mb-2">{{ ticket_form.amount.label }}</label>
+                  {{ ticket_form.amount(class="w-full p-3 border rounded-lg bg-gray-900 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
+                </div>
               </div>
-              <div>
-                <label class="block text-gray-300 mb-2">{{ ticket_form.reason.label }}</label>
-                {{ ticket_form.reason(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
+              <button type="submit" class="upike-button text-white font-semibold mt-4">
+                Issue Ticket
+              </button>
+            </form>
+          </div>
+        {% endif %}
+
+        <!-- Tickets List -->
+        <div class="grid grid-cols-1 gap-4">
+          {% for ticket in all_tickets|sort(attribute='issue_date', reverse=true) %}
+            <div class="bg-gray-800 rounded-xl p-6 transition-all hover:bg-gray-700">
+              <div class="flex flex-col md:flex-row md:items-center justify-between mb-4">
+                <div class="flex items-center space-x-4">
+                  <div class="bg-gray-700 rounded-full w-12 h-12 flex items-center justify-center">
+                    <span class="text-2xl text-gray-300">#{{ ticket.id }}</span>
+                  </div>
+                  <div>
+                    <h3 class="text-lg font-semibold text-white">Student #{{ ticket.student_id }}</h3>
+                    <p class="text-gray-400 text-sm">{{ ticket.issue_date.strftime('%Y-%m-%d %H:%M') }}</p>
+                  </div>
+                </div>
+                <div class="mt-4 md:mt-0 flex items-center space-x-4">
+                  <span class="px-4 py-2 rounded-full text-sm font-medium
+                    {% if ticket.status == 'pending' %}bg-yellow-500/20 text-yellow-300
+                    {% elif ticket.status == 'paid' %}bg-green-500/20 text-green-300
+                    {% else %}bg-red-500/20 text-red-300{% endif %}">
+                    {{ ticket.status|title }}
+                  </span>
+                  <span class="px-4 py-2 rounded-full text-sm font-medium bg-blue-500/20 text-blue-300">
+                    ${{ '%.2f'|format(ticket.amount) }}
+                  </span>
+                </div>
               </div>
-              <div>
-                <label class="block text-gray-300 mb-2">{{ ticket_form.amount.label }}</label>
-                {{ ticket_form.amount(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Ticket Details -->
+                <div class="bg-gray-900/50 rounded-lg p-4">
+                  <h4 class="text-sm font-medium text-gray-400 mb-3">Ticket Information</h4>
+                  <div class="space-y-4">
+                    <div>
+                      <p class="text-sm text-gray-400">Reason</p>
+                      <p class="text-lg font-semibold text-white">{{ ticket.reason }}</p>
+                    </div>
+                    <div>
+                      <p class="text-sm text-gray-400">Issuing Officer</p>
+                      <p class="text-lg font-semibold text-white">{{ ticket.admin.first_name }} {{ ticket.admin.last_name if ticket.admin.last_name else '' }}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Edit Form -->
+                <div class="bg-gray-900/50 rounded-lg p-4">
+                  <form method="POST" class="space-y-4">
+                    <input type="hidden" name="ticket_id" value="{{ ticket.id }}">
+                    {{ edit_forms[ticket.id].hidden_tag() }}
+                    <div class="grid grid-cols-2 gap-4">
+                      <div>
+                        <label class="block text-gray-300 mb-2">{{ edit_forms[ticket.id].reason.label }}</label>
+                        {{ edit_forms[ticket.id].reason(class="w-full p-2 border rounded-lg bg-gray-800 text-white border-gray-600") }}
+                      </div>
+                      <div>
+                        <label class="block text-gray-300 mb-2">{{ edit_forms[ticket.id].amount.label }}</label>
+                        {{ edit_forms[ticket.id].amount(class="w-full p-2 border rounded-lg bg-gray-800 text-white border-gray-600") }}
+                      </div>
+                      <div class="col-span-2">
+                        <label class="block text-gray-300 mb-2">{{ edit_forms[ticket.id].status.label }}</label>
+                        {{ edit_forms[ticket.id].status(class="w-full p-2 border rounded-lg bg-gray-800 text-white border-gray-600") }}
+                      </div>
+                    </div>
+                    <div class="flex space-x-4">
+                      <button type="submit" class="upike-button text-white py-2 px-4 rounded-lg">Update</button>
+                      <form method="POST" action="{{ url_for('delete_ticket', ticket_id=ticket.id) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this ticket?');">
+                        <button type="submit" class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors">Delete</button>
+                      </form>
+                    </div>
+                  </form>
+                </div>
               </div>
             </div>
-            <button type="submit" class="upike-button text-white font-semibold mt-4 hover:shadow-lg transform hover:-translate-y-1 transition duration-300">
-              Issue Ticket
-            </button>
-          </form>
-        {% endif %}
-        <div class="overflow-x-auto">
-          <table class="w-full border-collapse text-gray-200 table-hover">
-            <thead>
-              <tr class="bg-gray-900">
-                <th class="p-4 text-left font-semibold">Ticket ID</th>
-                <th class="p-4 text-left font-semibold">Student ID</th>
-                <th class="p-4 text-left font-semibold">Issue Date</th>
-                <th class="p-4 text-left font-semibold">Reason</th>
-                <th class="p-4 text-left font-semibold">Amount ($)</th>
-                <th class="p-4 text-left font-semibold">Status</th>
-                <th class="p-4 text-left font-semibold">Issuing Officer</th>
-                <th class="p-4 text-left font-semibold">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for ticket in all_tickets %}
-                <tr class="border-b border-gray-700">
-                  <td class="p-4">{{ ticket.id }}</td>
-                  <td class="p-4">{{ ticket.student_id }}</td>
-                  <td class="p-4">{{ ticket.issue_date.strftime('%Y-%m-%d %H:%M') }}</td>
-                  <td class="p-4">{{ ticket.reason }}</td>
-                  <td class="p-4">${{ "%.2f" % ticket.amount }}</td>
-                  <td class="p-4">{{ ticket.status }}</td>
-                  <td class="p-4">{{ ticket.admin.first_name }} {{ ticket.admin.last_name if ticket.admin.last_name else '' }}</td>
-                  <td class="p-4 flex space-x-3">
-                    <form method="POST" action="{{ url_for('delete_ticket', ticket_id=ticket.id) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this ticket?');">
-                      <button type="submit" class="upike-button bg-red-600 text-white py-1 px-3 rounded-lg">Delete</button>
-                    </form>
-                    <form method="POST" class="inline">
-                      <input type="hidden" name="ticket_id" value="{{ ticket.id }}">
-                      {{ edit_forms[ticket.id].hidden_tag() }}
-                      <input type="text" name="reason" value="{{ edit_forms[ticket.id].reason.data }}" class="w-24 p-2 border rounded-lg bg-gray-800 text-white border-gray-600 mb-2" required>
-                      <input type="number" step="0.01" name="amount" value="{{ edit_forms[ticket.id].amount.data }}" class="w-20 p-2 border rounded-lg bg-gray-800 text-white border-gray-600 mb-2" required>
-                      {{ edit_forms[ticket.id].status(class="w-28 p-2 border rounded-lg bg-gray-800 text-white border-gray-600 mb-2", required="true") }}
-                      <button type="submit" class="upike-button text-white py-1 px-3 rounded-lg">Update</button>
-                    </form>
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+          {% else %}
+            <div class="text-center py-12 bg-gray-800 rounded-xl">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <h3 class="text-xl font-medium text-gray-400">No Tickets Found</h3>
+              <p class="text-gray-500 mt-2">Start by issuing a new ticket above</p>
+            </div>
+          {% endfor %}
         </div>
       </div>
     </div>
@@ -298,6 +411,7 @@
                     <p class="text-gray-400 text-sm">Ticket #{{ appeal.ticket_id }}</p>
                   </div>
                 </div>
+
                 <div class="mt-4 md:mt-0 flex items-center space-x-4">
                   <span class="px-4 py-2 rounded-full text-sm font-medium
                     {% if appeal.status == 'pending' %}bg-yellow-500/20 text-yellow-300
