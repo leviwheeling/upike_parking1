@@ -383,8 +383,8 @@
                       <p class="text-lg font-semibold text-white">{{ appeal.decision_date.strftime('%Y-%m-%d %H:%M') }}</p>
                     </div>
                     <div>
-                      <p class="text-sm text-gray-400">Decided By</p>
-                      <p class="text-lg font-semibold text-white">{{ appeal.admin.username }}</p>
+                      <p class="text-sm text-gray-400">Status</p>
+                      <p class="text-lg font-semibold text-white">{{ appeal.status|title }}</p>
                     </div>
                   </div>
                 </div>
