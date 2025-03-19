@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Signup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #0b0b0b, #1a1a1a);
+      font-family: 'Inter', sans-serif;
+      color: #f5f5f5;
+      overflow-x: hidden;
+    }
+    .upike-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(242, 105, 37, 0.2);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 20px rgba(242, 105, 37, 0.3);
+      border-radius: 1.5rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .upike-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 8px 30px rgba(242, 105, 37, 0.5);
+    }
+    .upike-button {
+      background: linear-gradient(45deg, #F26925, #e07a3a);
+      box-shadow: 0 4px 15px rgba(242, 105, 37, 0.5);
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.75rem;
+      transition: all 0.3s ease;
+    }
+    .upike-button:hover {
+      box-shadow: 0 6px 25px rgba(242, 105, 37, 0.7);
+      transform: scale(1.05);
+    }
+    .upike-button:active {
+      transform: scale(0.95);
+    }
+    .animate-pulse {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body class="min-h-screen p-6">
+  <div class="max-w-3xl mx-auto">
+    <div class="upike-card p-8 rounded-2xl mb-8 text-center">
+      <h1 class="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#F26925] to-[#e07a3a] animate-pulse">
+        UPike Parking - Student Signup
+      </h1>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="upike-card p-5 mb-6 rounded-xl">
+          {% for category, message in messages %}
+            <p class="text-lg {% if category == 'success' %}text-green-400{% elif category == 'warning' %}text-yellow-400{% else %}text-red-400{% endif %} animate-fade-in">
+              {{ message }}
+            </p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Signup Form -->
+    <div class="upike-card p-6 rounded-2xl">
+      <form method="POST" action="{{ url_for('signup') }}" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {{ form.hidden_tag() }}
+        <div class="col-span-2">
+          <label class="block text-gray-300 font-semibold mb-2">{{ form.email.label }}</label>
+          {{ form.email(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
+          {% for error in form.email.errors %}
+            <span class="text-red-400 text-sm">{{ error }}</span><br>
+          {% endfor %}
+        </div>
+        <div class="col-span-2">
+          <label class="block text-gray-300 font-semibold mb-2">{{ form.permit_number.label }}</label>
+          {{ form.permit_number(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
+          {% for error in form.permit_number.errors %}
+            <span class="text-red-400 text-sm">{{ error }}</span><br>
+          {% endfor %}
+        </div>
+        <div>
+          <label class="block text-gray-300 font-semibold mb-2">{{ form.phone_number.label }}</label>
+          {{ form.phone_number(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
+          {% for error in form.phone_number.errors %}
+            <span class="text-red-400 text-sm">{{ error }}</span><br>
+          {% endfor %}
+        </div>
+        <div>
+          <label class="block text-gray-300 font-semibold mb-2">{{ form.permit_type.label }}</label>
+          {{ form.permit_type(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
+          {% for error in form.permit_type.errors %}
+            <span class="text-red-400 text-sm">{{ error }}</span><br>
+          {% endfor %}
+        </div>
+        <div>
+          <label class="block text-gray-300 font-semibold mb-2">{{ form.residence.label }}</label>
+          {{ form.residence(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300") }}
+          {% for error in form.residence.errors %}
+            <span class="text-red-400 text-sm">{{ error }}</span><br>
+          {% endfor %}
+        </div>
+        <div>
+          <label class="block text-gray-300 font-semibold mb-2">{{ form.first_name.label }}</label>
+          {{ form.first_name(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300") }}
+          {% for error in form.first_name.errors %}
+            <span class="text-red-400 text-sm">{{ error }}</span><br>
+          {% endfor %}
+        </div>
+        <div>
+          <label class="block text-gray-300 font-semibold mb-2">{{ form.last_name.label }}</label>
+          {{ form.last_name(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300") }}
+          {% for error in form.last_name.errors %}
+            <span class="text-red-400 text-sm">{{ error }}</span><br>
+          {% endfor %}
+        </div>
+        <div>
+          <label class="block text-gray-300 font-semibold mb-2">{{ form.vehicle_color.label }}</label>
+          {{ form.vehicle_color(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
+          {% for error in form.vehicle_color.errors %}
+            <span class="text-red-400 text-sm">{{ error }}</span><br>
+          {% endfor %}
+        </div>
+        <div>
+          <label class="block text-gray-300 font-semibold mb-2">{{ form.license_plate_number.label }}</label>
+          {{ form.license_plate_number(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
+          {% for error in form.license_plate_number.errors %}
+            <span class="text-red-400 text-sm">{{ error }}</span><br>
+          {% endfor %}
+        </div>
+        <div>
+          <label class="block text-gray-300 font-semibold mb-2">{{ form.license_plate_state.label }}</label>
+          {{ form.license_plate_state(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
+          {% for error in form.license_plate_state.errors %}
+            <span class="text-red-400 text-sm">{{ error }}</span><br>
+          {% endfor %}
+        </div>
+        <div>
+          <label class="block text-gray-300 font-semibold mb-2">{{ form.vehicle_year.label }}</label>
+          {{ form.vehicle_year(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
+          {% for error in form.vehicle_year.errors %}
+            <span class="text-red-400 text-sm">{{ error }}</span><br>
+          {% endfor %}
+        </div>
+        <div>
+          <label class="block text-gray-300 font-semibold mb-2">{{ form.make.label }}</label>
+          {{ form.make(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
+          {% for error in form.make.errors %}
+            <span class="text-red-400 text-sm">{{ error }}</span><br>
+          {% endfor %}
+        </div>
+        <div>
+          <label class="block text-gray-300 font-semibold mb-2">{{ form.model.label }}</label>
+          {{ form.model(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
+          {% for error in form.model.errors %}
+            <span class="text-red-400 text-sm">{{ error }}</span><br>
+          {% endfor %}
+        </div>
+        <div class="col-span-2">
+          <label class="block text-gray-300 font-semibold mb-2">{{ form.password.label }}</label>
+          {{ form.password(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
+          {% for error in form.password.errors %}
+            <span class="text-red-400 text-sm">{{ error }}</span><br>
+          {% endfor %}
+        </div>
+        <div class="col-span-2">
+          <label class="block text-gray-300 font-semibold mb-2">{{ form.confirm_password.label }}</label>
+          {{ form.confirm_password(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
+          {% for error in form.confirm_password.errors %}
+            <span class="text-red-400 text-sm">{{ error }}</span><br>
+          {% endfor %}
+        </div>
+        <div class="col-span-2">
+          <button type="submit" class="upike-button text-white w-full font-semibold hover:shadow-lg transform hover:-translate-y-1 transition duration-300">
+            Sign Up
+          </button>
+        </div>
+      </form>
+      <p class="mt-4 text-center text-gray-400">
+        Already have an account? <a href="{{ url_for('landing') }}" class="text-[#F26925] hover:underline">Login</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>

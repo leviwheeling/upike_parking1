@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: upike-parking
+    env: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn --bind 0.0.0.0:$PORT app:application"
+    preDeployCommand: "apt-get update && apt-get install -y libmagic1"
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: PYTHON_VERSION
+        value: 3.9.0
+      - key: DATABASE_URL
+        sync: false
+    repo: https://github.com/leviwheeling/upike_parking

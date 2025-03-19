@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #0b0b0b, #1a1a1a);
+      font-family: 'Inter', sans-serif;
+      color: #f5f5f5;
+      overflow-x: hidden;
+    }
+    .upike-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(242, 105, 37, 0.2);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 20px rgba(242, 105, 37, 0.3);
+      border-radius: 1.5rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .upike-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 8px 30px rgba(242, 105, 37, 0.5);
+    }
+    .upike-button {
+      background: linear-gradient(45deg, #F26925, #e07a3a);
+      box-shadow: 0 4px 15px rgba(242, 105, 37, 0.5);
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.75rem;
+      transition: all 0.3s ease;
+    }
+    .upike-button:hover {
+      box-shadow: 0 6px 25px rgba(242, 105, 37, 0.7);
+      transform: scale(1.05);
+    }
+    .upike-button:active {
+      transform: scale(0.95);
+    }
+    .upike-subtitle {
+      color: #F26925;
+      font-weight: 700;
+      text-shadow: 0 2px 10px rgba(242, 105, 37, 0.3);
+      cursor: pointer;
+    }
+    .table-hover tr:hover {
+      background: rgba(242, 105, 37, 0.1);
+      transition: background 0.3s ease;
+    }
+    .modal {
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+    }
+    .modal-content {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(242, 105, 37, 0.3);
+      border-radius: 1rem;
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+  <script>
+    function toggleSection(sectionId) {
+      const section = document.getElementById(sectionId);
+      section.classList.toggle('hidden');
+      section.style.transition = 'all 0.3s ease';
+    }
+  </script>
+</head>
+<body class="min-h-screen p-6">
+  <div class="max-w-6xl mx-auto">
+    <div class="upike-card p-8 rounded-2xl mb-8 text-center">
+      <h1 class="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#F26925] to-[#e07a3a] animate-pulse">
+        UPike Admin Portal
+      </h1>
+      <p class="text-xl mb-6">Welcome, {{ current_user.username }} ({{ current_user.role }})</p>
+      <a href="{{ url_for('logout') }}" class="text-[#F26925] hover:text-[#e07a3a] underline transition duration-300">Logout</a>
+      {% if current_user.role == 'Admin Officer' %}
+        <a href="{{ url_for('admin_officer_dashboard') }}" class="upike-button text-white ml-4">Admin Officer Dashboard</a>
+      {% endif %}
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="upike-card p-5 mb-6 rounded-xl">
+          {% for category, message in messages %}
+            <p class="text-lg {% if category == 'success' %}text-green-400{% elif category == 'warning' %}text-yellow-400{% else %}text-red-400{% endif %} animate-fade-in">
+              {{ message }}
+            </p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- Search Section (for Admin Officers and Parking Officers) -->
+    {% if search_form %}
+      <div class="upike-card p-6 rounded-2xl mb-6">
+        <h2 class="upike-subtitle text-3xl mb-6" onclick="toggleSection('search-section')">Search Students</h2>
+        <div id="search-section" class="">
+          <form method="POST" class="space-y-4 mb-6">
+            {{ search_form.hidden_tag() }}
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <label class="block text-gray-300 mb-2">{{ search_form.first_name.label }}</label>
+                {{ search_form.first_name(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300") }}
+              </div>
+              <div>
+                <label class="block text-gray-300 mb-2">{{ search_form.last_name.label }}</label>
+                {{ search_form.last_name(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300") }}
+              </div>
+              <div>
+                <label class="block text-gray-300 mb-2">{{ search_form.phone_number.label }}</label>
+                {{ search_form.phone_number(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300") }}
+              </div>
+              <div>
+                <label class="block text-gray-300 mb-2">{{ search_form.permit_number.label }}</label>
+                {{ search_form.permit_number(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300") }}
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <label class="block text-gray-300 mb-2">{{ search_form.make.label }}</label>
+                {{ search_form.make(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300") }}
+              </div>
+              <div>
+                <label class="block text-gray-300 mb-2">{{ search_form.model.label }}</label>
+                {{ search_form.model(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300") }}
+              </div>
+              <div>
+                <label class="block text-gray-300 mb-2">{{ search_form.vehicle_color.label }}</label>
+                {{ search_form.vehicle_color(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300") }}
+              </div>
+              <div>
+                <label class="block text-gray-300 mb-2">{{ search_form.license_plate_number.label }}</label>
+                {{ search_form.license_plate_number(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300") }}
+              </div>
+            </div>
+            <button type="submit" class="upike-button text-white font-semibold mt-4 hover:shadow-lg transform hover:-translate-y-1 transition duration-300">
+              Search
+            </button>
+          </form>
+          {% if students %}
+            <div class="overflow-x-auto">
+              <table class="w-full border-collapse text-gray-200 table-hover">
+                <thead>
+                  <tr class="bg-gray-900">
+                    <th class="p-4 text-left font-semibold">Student ID</th>
+                    <th class="p-4 text-left font-semibold">Email</th>
+                    <th class="p-4 text-left font-semibold">Permit Number</th>
+                    <th class="p-4 text-left font-semibold">Phone Number</th>
+                    <th class="p-4 text-left font-semibold">License Plate</th>
+                    <th class="p-4 text-left font-semibold">Permit Type</th>
+                    <th class="p-4 text-left font-semibold">Residence</th>
+                    <th class="p-4 text-left font-semibold">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for student in students %}
+                    <tr class="border-b border-gray-700">
+                      <td class="p-4">{{ student.id }}</td>
+                      <td class="p-4">{{ student.email }}</td>
+                      <td class="p-4">{{ student.permit_number }}</td>
+                      <td class="p-4">{{ student.phone_number }}</td>
+                      <td class="p-4">{{ student.license_plate_number }} ({{ student.license_plate_state }})</td>
+                      <td class="p-4">{{ student.permit_type }}</td>
+                      <td class="p-4">{{ student.residence or 'N/A' }}</td>
+                      <td class="p-4">
+                        {% if ticket_form %}
+                          <form method="POST" class="inline">
+                            {{ ticket_form.hidden_tag() }}
+                            <input type="hidden" name="student_id" value="{{ student.id }}">
+                            <input type="text" name="reason" placeholder="Reason" class="w-32 p-2 border rounded-lg bg-gray-800 text-white border-gray-600 mb-2" required>
+                            <input type="number" step="0.01" name="amount" placeholder="Amount" class="w-20 p-2 border rounded-lg bg-gray-800 text-white border-gray-600 mb-2" required>
+                            <button type="submit" class="upike-button text-white py-1 px-3 rounded-lg">Issue Ticket</button>
+                          </form>
+                        {% endif %}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <p class="text-gray-400 text-center py-6">No students found.</p>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Ticket Management Section -->
+    <div class="upike-card p-6 rounded-2xl mb-6">
+      <h2 class="upike-subtitle text-3xl mb-6" onclick="toggleSection('ticket-section')">Ticket Management</h2>
+      <div id="ticket-section" class="">
+        {% if ticket_form %}
+          <form method="POST" class="space-y-4 mb-6">
+            {{ ticket_form.hidden_tag() }}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-gray-300 mb-2">{{ ticket_form.student_id.label }}</label>
+                {{ ticket_form.student_id(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
+              </div>
+              <div>
+                <label class="block text-gray-300 mb-2">{{ ticket_form.reason.label }}</label>
+                {{ ticket_form.reason(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
+              </div>
+              <div>
+                <label class="block text-gray-300 mb-2">{{ ticket_form.amount.label }}</label>
+                {{ ticket_form.amount(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
+              </div>
+            </div>
+            <button type="submit" class="upike-button text-white font-semibold mt-4 hover:shadow-lg transform hover:-translate-y-1 transition duration-300">
+              Issue Ticket
+            </button>
+          </form>
+        {% endif %}
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse text-gray-200 table-hover">
+            <thead>
+              <tr class="bg-gray-900">
+                <th class="p-4 text-left font-semibold">Ticket ID</th>
+                <th class="p-4 text-left font-semibold">Student ID</th>
+                <th class="p-4 text-left font-semibold">Issue Date</th>
+                <th class="p-4 text-left font-semibold">Reason</th>
+                <th class="p-4 text-left font-semibold">Amount ($)</th>
+                <th class="p-4 text-left font-semibold">Status</th>
+                <th class="p-4 text-left font-semibold">Issuing Officer</th>
+                <th class="p-4 text-left font-semibold">Officer Number</th>
+                <th class="p-4 text-left font-semibold">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for ticket in all_tickets %}
+                <tr class="border-b border-gray-700">
+                  <td class="p-4">{{ ticket.id }}</td>
+                  <td class="p-4">{{ ticket.student_id }}</td>
+                  <td class="p-4">{{ ticket.issue_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                  <td class="p-4">{{ ticket.reason }}</td>
+                  <td class="p-4">${{ "%.2f" % ticket.amount }}</td>
+                  <td class="p-4">{{ ticket.status }}</td>
+                  <td class="p-4">{{ ticket.admin.first_name }} {{ ticket.admin.last_name if ticket.admin.last_name else '' }}</td>
+                  <td class="p-4">{{ ticket.admin.officer_number if ticket.admin.officer_number else 'N/A' }}</td>
+                  <td class="p-4 flex space-x-3">
+                    <form method="POST" action="{{ url_for('delete_ticket', ticket_id=ticket.id) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this ticket?');">
+                      <button type="submit" class="upike-button bg-red-600 text-white py-1 px-3 rounded-lg">Delete</button>
+                    </form>
+                    <form method="POST" class="inline">
+                      <input type="hidden" name="ticket_id" value="{{ ticket.id }}">
+                      {{ edit_forms[ticket.id].hidden_tag() }}
+                      <input type="text" name="reason" value="{{ edit_forms[ticket.id].reason.data }}" class="w-24 p-2 border rounded-lg bg-gray-800 text-white border-gray-600 mb-2" required>
+                      <input type="number" step="0.01" name="amount" value="{{ edit_forms[ticket.id].amount.data }}" class="w-20 p-2 border rounded-lg bg-gray-800 text-white border-gray-600 mb-2" required>
+                      {{ edit_forms[ticket.id].status(class="w-28 p-2 border rounded-lg bg-gray-800 text-white border-gray-600 mb-2", required="true") }}
+                      <button type="submit" class="upike-button text-white py-1 px-3 rounded-lg">Update</button>
+                    </form>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Appeal Management Section -->
+    <div class="upike-card p-6 rounded-2xl mb-6">
+      <h2 class="upike-subtitle text-3xl mb-6" onclick="toggleSection('appeal-section')">Appeal Management</h2>
+      <div id="appeal-section" class="">
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse text-gray-200 table-hover">
+            <thead>
+              <tr class="bg-gray-900">
+                <th class="p-4 text-left font-semibold">Appeal ID</th>
+                <th class="p-4 text-left font-semibold">Ticket ID</th>
+                <th class="p-4 text-left font-semibold">Description</th>
+                <th class="p-4 text-left font-semibold">Media</th>
+                <th class="p-4 text-left font-semibold">Status</th>
+                <th class="p-4 text-left font-semibold">Decision Date</th>
+                <th class="p-4 text-left font-semibold">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for appeal in all_appeals %}
+                <tr class="border-b border-gray-700">
+                  <td class="p-4">{{ appeal.id }}</td>
+                  <td class="p-4">{{ appeal.ticket_id }}</td>
+                  <td class="p-4">{{ appeal.appeal_text }}</td>
+                  <td class="p-4">
+                    {% if appeal.media_data %}
+                      <a href="{{ url_for('appeal_media', appeal_id=appeal.id) }}" class="text-[#F26925] hover:underline" target="_blank">View Media</a>
+                    {% else %}
+                      N/A
+                    {% endif %}
+                  </td>
+                  <td class="p-4">{{ appeal.status }}</td>
+                  <td class="p-4">{{ appeal.decision_date.strftime('%Y-%m-%d %H:%M') if appeal.decision_date else 'Pending' }}</td>
+                  <td class="p-4">
+                    {% if appeal.status == 'pending' %}
+                      <form method="POST" class="inline">
+                        <input type="hidden" name="appeal_id" value="{{ appeal.id }}">
+                        <select name="appeal_action" class="w-28 p-2 border rounded-lg bg-gray-800 text-white border-gray-600 mb-2" required>
+                          <option value="approved">Approve</option>
+                          <option value="rejected">Reject</option>
+                        </select>
+                        <button type="submit" class="upike-button text-white py-1 px-3 rounded-lg">Submit</button>
+                      </form>
+                    {% else %}
+                      <span class="text-gray-400">Decision Made</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
