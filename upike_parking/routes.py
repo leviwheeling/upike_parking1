@@ -790,7 +790,7 @@ def admin_officer_dashboard():
                 start_date = today - timedelta(days=365)
 
             if report_type == 'tickets_issued':
-                tickets = Ticket.query.filter(Ticket.created_at >= start_date).all()
+                tickets = Ticket.query.filter(Ticket.issue_date >= start_date).all()
                 report_data = {
                     "Total Tickets Issued": len(tickets),
                     "Pending Tickets": len([t for t in tickets if t.status == 'Pending']),
@@ -806,7 +806,7 @@ def admin_officer_dashboard():
                     "Rejected Appeals": len([a for a in appeals if a.status == 'rejected'])
                 }
             elif report_type == 'revenue':
-                paid_tickets = Ticket.query.filter(Ticket.status == 'Paid', Ticket.created_at >= start_date).all()
+                paid_tickets = Ticket.query.filter(Ticket.status == 'Paid', Ticket.issue_date >= start_date).all()
                 total_revenue = sum(t.amount for t in paid_tickets if t.amount is not None)
                 report_data = {
                     "Total Revenue": f"${total_revenue:.2f}",
