@@ -151,37 +151,29 @@
               <table class="w-full border-collapse text-gray-200 table-hover">
                 <thead>
                   <tr class="bg-gray-900">
-                    <th class="p-4 text-left font-semibold">Student ID</th>
-                    <th class="p-4 text-left font-semibold">Email</th>
-                    <th class="p-4 text-left font-semibold">Permit Number</th>
+                    <th class="p-4 text-left font-semibold">ID</th>
+                    <th class="p-4 text-left font-semibold">First Name</th>
+                    <th class="p-4 text-left font-semibold">Last Name</th>
                     <th class="p-4 text-left font-semibold">Phone Number</th>
+                    <th class="p-4 text-left font-semibold">Permit Number</th>
+                    <th class="p-4 text-left font-semibold">Vehicle Make</th>
+                    <th class="p-4 text-left font-semibold">Vehicle Model</th>
+                    <th class="p-4 text-left font-semibold">Vehicle Color</th>
                     <th class="p-4 text-left font-semibold">License Plate</th>
-                    <th class="p-4 text-left font-semibold">Permit Type</th>
-                    <th class="p-4 text-left font-semibold">Residence</th>
-                    <th class="p-4 text-left font-semibold">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {% for student in students %}
                     <tr class="border-b border-gray-700">
                       <td class="p-4">{{ student.id }}</td>
-                      <td class="p-4">{{ student.email }}</td>
-                      <td class="p-4">{{ student.permit_number }}</td>
+                      <td class="p-4">{{ student.first_name }}</td>
+                      <td class="p-4">{{ student.last_name }}</td>
                       <td class="p-4">{{ student.phone_number }}</td>
-                      <td class="p-4">{{ student.license_plate_number }} ({{ student.license_plate_state }})</td>
-                      <td class="p-4">{{ student.permit_type }}</td>
-                      <td class="p-4">{{ student.residence or 'N/A' }}</td>
-                      <td class="p-4">
-                        {% if ticket_form %}
-                          <form method="POST" class="inline">
-                            {{ ticket_form.hidden_tag() }}
-                            <input type="hidden" name="student_id" value="{{ student.id }}">
-                            <input type="text" name="reason" placeholder="Reason" class="w-32 p-2 border rounded-lg bg-gray-800 text-white border-gray-600 mb-2" required>
-                            <input type="number" step="0.01" name="amount" placeholder="Amount" class="w-20 p-2 border rounded-lg bg-gray-800 text-white border-gray-600 mb-2" required>
-                            <button type="submit" class="upike-button text-white py-1 px-3 rounded-lg">Issue Ticket</button>
-                          </form>
-                        {% endif %}
-                      </td>
+                      <td class="p-4">{{ student.permit_number }}</td>
+                      <td class="p-4">{{ student.make }}</td>
+                      <td class="p-4">{{ student.model }}</td>
+                      <td class="p-4">{{ student.vehicle_color }}</td>
+                      <td class="p-4">{{ student.license_plate_number }}</td>
                     </tr>
                   {% endfor %}
                 </tbody>

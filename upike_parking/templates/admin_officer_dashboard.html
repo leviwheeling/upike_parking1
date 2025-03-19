@@ -333,9 +333,13 @@
             <thead>
               <tr class="bg-gray-900">
                 <th class="p-4 text-left font-semibold">ID</th>
-                <th class="p-4 text-left font-semibold">Email</th>
+                <th class="p-4 text-left font-semibold">First Name</th>
+                <th class="p-4 text-left font-semibold">Last Name</th>
+                <th class="p-4 text-left font-semibold">Phone Number</th>
                 <th class="p-4 text-left font-semibold">Permit Number</th>
-                <th class="p-4 text-left font-semibold">Phone</th>
+                <th class="p-4 text-left font-semibold">Vehicle Make</th>
+                <th class="p-4 text-left font-semibold">Vehicle Model</th>
+                <th class="p-4 text-left font-semibold">Vehicle Color</th>
                 <th class="p-4 text-left font-semibold">License Plate</th>
               </tr>
             </thead>
@@ -343,9 +347,13 @@
               {% for student in students %}
                 <tr class="border-b border-gray-700">
                   <td class="p-4">{{ student.id }}</td>
-                  <td class="p-4">{{ student.email }}</td>
-                  <td class="p-4">{{ student.permit_number }}</td>
+                  <td class="p-4">{{ student.first_name }}</td>
+                  <td class="p-4">{{ student.last_name }}</td>
                   <td class="p-4">{{ student.phone_number }}</td>
+                  <td class="p-4">{{ student.permit_number }}</td>
+                  <td class="p-4">{{ student.make }}</td>
+                  <td class="p-4">{{ student.model }}</td>
+                  <td class="p-4">{{ student.vehicle_color }}</td>
                   <td class="p-4">{{ student.license_plate_number }}</td>
                 </tr>
               {% endfor %}
