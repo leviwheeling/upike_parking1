@@ -2,6 +2,12 @@
 from . import db
 from flask_login import UserMixin
 from datetime import datetime
+import pytz
+
+def get_est_time():
+    utc_time = datetime.utcnow()
+    est_tz = pytz.timezone('America/New_York')
+    return utc_time.replace(tzinfo=pytz.UTC).astimezone(est_tz)
 
 class Student(UserMixin, db.Model):
     __tablename__ = 'students'
@@ -44,7 +50,7 @@ class Ticket(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey('students.id'), nullable=False)
     admin_username = db.Column(db.String(50), db.ForeignKey('admins.username'), nullable=False)
-    issue_date = db.Column(db.DateTime, default=datetime.utcnow)
+    issue_date = db.Column(db.DateTime, default=get_est_time)
     reason = db.Column(db.String(200), nullable=False)
     amount = db.Column(db.Float, nullable=False)
     status = db.Column(db.String(20), nullable=False, default='Pending')
@@ -59,5 +65,5 @@ class Appeal(db.Model):
     status = db.Column(db.String(20), nullable=False, default='pending')
     media_data = db.Column(db.LargeBinary, nullable=True)
     media_type = db.Column(db.String(50), nullable=True)
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, nullable=False, default=get_est_time)
     decision_date = db.Column(db.DateTime, nullable=True, default=None)

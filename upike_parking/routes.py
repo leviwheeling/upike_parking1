@@ -11,11 +11,18 @@ from .models import Student, Admin, Ticket, Appeal
 from .forms import StudentLoginForm, AdminSignupForm, AdminLoginForm, SignupForm, UpdateForm, TicketForm, EditTicketForm, AppealForm, SearchForm, LoginForm, UserForm, ReportForm
 import stripe
 import os
+import pytz
 
 ALLOWED_EXTENSIONS = {'.heic', '.jpg', '.png', '.jpeg'}
 
 def allowed_file(filename):
     return os.path.splitext(filename)[1].lower() in ALLOWED_EXTENSIONS
+
+# Add timezone helper function
+def get_est_time():
+    utc_time = datetime.utcnow()
+    est_tz = pytz.timezone('America/New_York')
+    return utc_time.replace(tzinfo=pytz.UTC).astimezone(est_tz)
 
 # Consolidated landing route for both students and admins
 @app.route('/', methods=['GET', 'POST'])
@@ -570,7 +577,7 @@ def admin_dashboard():
         ticket = db.session.get(Ticket, appeal.ticket_id) if appeal else None
         if appeal and ticket:
             appeal.status = action.lower()
-            appeal.decision_date = datetime.utcnow()
+            appeal.decision_date = get_est_time()
             if action.lower() == 'approved':
                 ticket.status = 'Paid'
                 ticket.amount = 0.0  # Waive fine
@@ -692,7 +699,7 @@ def admin_officer_dashboard():
         ticket = db.session.get(Ticket, appeal.ticket_id) if appeal else None
         if appeal and ticket:
             appeal.status = action.lower()
-            appeal.decision_date = datetime.utcnow()
+            appeal.decision_date = get_est_time()
             if action.lower() == 'approved':
                 ticket.status = 'Paid'
                 ticket.amount = 0.0  # Waive fine
@@ -781,7 +788,7 @@ def admin_officer_dashboard():
             report_type = report_form.report_type.data
             date_range = report_form.date_range.data
 
-            today = datetime.utcnow()
+            today = get_est_time()
             if date_range == 'last_7_days':
                 start_date = today - timedelta(days=7)
             elif date_range == 'last_30_days':
@@ -870,4 +877,4 @@ def admin_officer_dashboard():
                           user_form=user_form,
                           report_form=report_form,
                           report_data=report_data,
-                          now=datetime.utcnow())
+                          now=get_est_time())
