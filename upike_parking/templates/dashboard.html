@@ -112,11 +112,28 @@
       animation: fadeIn 0.5s ease-out forwards;
     }
     .form-input {
-      @apply w-full p-3 border rounded-lg bg-gray-800/50 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:border-transparent focus:outline-none transition duration-300;
-      backdrop-filter: blur(5px);
+      @apply w-full p-4 rounded-xl bg-black/40 text-white border-2 border-gray-800 
+             focus:border-[#F26925] focus:ring-2 focus:ring-[#F26925]/20 focus:outline-none 
+             transition-all duration-300 ease-in-out;
+      backdrop-filter: blur(12px);
     }
     .form-input:hover {
-      @apply border-[#F26925] bg-gray-800/70;
+      @apply border-[#F26925]/50 bg-black/60;
+      box-shadow: 0 0 20px rgba(242, 105, 37, 0.1);
+    }
+    .form-input::placeholder {
+      @apply text-gray-500;
+    }
+    .form-group {
+      @apply relative;
+    }
+    .form-label {
+      @apply absolute -top-3 left-3 px-2 text-sm font-medium text-gray-300 bg-[#0b0b0b] 
+             rounded-md transform transition-all duration-200;
+    }
+    .form-input:focus + .form-label,
+    .form-input:not(:placeholder-shown) + .form-label {
+      @apply -top-3 left-3 text-[#F26925] scale-90;
     }
   </style>
   <script>
@@ -221,16 +238,20 @@
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div class="col-span-full md:col-span-2 lg:col-span-3">
               <div class="p-4 bg-gray-800/30 rounded-lg">
-                <p class="text-gray-300">Student ID: <span class="font-semibold">{{ student.id }}</span> (cannot be changed)</p>
+                <p class="text-gray-300">Student ID: <span class="font-semibold text-white">{{ student.id }}</span> (cannot be changed)</p>
               </div>
             </div>
             
             {% for field in [form.email, form.permit_number, form.phone_number, form.permit_type, form.residence,
                            form.first_name, form.last_name, form.vehicle_color, form.license_plate_number,
                            form.license_plate_state, form.vehicle_year, form.make, form.model, form.password] %}
-              <div>
-                <label class="block text-gray-300 mb-2 font-medium">{{ field.label }}</label>
-                {{ field(class="form-input") }}
+              <div class="form-group">
+                {% if field.type == 'PasswordField' %}
+                  {{ field(class="form-input", placeholder="Enter new password to change") }}
+                {% else %}
+                  {{ field(class="form-input", placeholder=field.label.text) }}
+                {% endif %}
+                <label class="form-label">{{ field.label }}</label>
                 {% for error in field.errors %}
                   <span class="text-red-400 text-sm block mt-1">{{ error }}</span>
                 {% endfor %}
