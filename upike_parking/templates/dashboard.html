@@ -112,13 +112,18 @@
       animation: fadeIn 0.5s ease-out forwards;
     }
     .form-input {
-      @apply w-full p-4 rounded-xl bg-black/40 text-white border-2 border-gray-800 
+      @apply w-full p-4 rounded-xl bg-black text-white border-2 border-gray-800 
              focus:border-[#F26925] focus:ring-2 focus:ring-[#F26925]/20 focus:outline-none 
              transition-all duration-300 ease-in-out;
       backdrop-filter: blur(12px);
+      background-color: #000000 !important;
+      color: white !important;
+      -webkit-text-fill-color: white;
+      -webkit-background-clip: text;
     }
     .form-input:hover {
-      @apply border-[#F26925]/50 bg-black/60;
+      @apply border-[#F26925]/50;
+      background-color: #111111 !important;
       box-shadow: 0 0 20px rgba(242, 105, 37, 0.1);
     }
     .form-input::placeholder {
@@ -247,9 +252,9 @@
                            form.license_plate_state, form.vehicle_year, form.make, form.model, form.password] %}
               <div class="form-group">
                 {% if field.type == 'PasswordField' %}
-                  {{ field(class="form-input", placeholder="Enter new password to change") }}
+                  {{ field(class="form-input", placeholder="Enter new password to change", style="background-color: #000000; color: white;") }}
                 {% else %}
-                  {{ field(class="form-input", placeholder=field.label.text) }}
+                  {{ field(class="form-input", placeholder=field.label.text, style="background-color: #000000; color: white;") }}
                 {% endif %}
                 <label class="form-label">{{ field.label }}</label>
                 {% for error in field.errors %}
