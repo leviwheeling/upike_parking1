@@ -869,4 +869,5 @@ def admin_officer_dashboard():
                           all_students=all_students,
                           user_form=user_form,
                           report_form=report_form,
-                          report_data=report_data)
+                          report_data=report_data,
+                          now=datetime.utcnow())
