@@ -123,7 +123,7 @@
             </div>
             <div class="bg-gray-800 rounded-xl p-4">
               <h3 class="text-gray-400 text-sm">Search Filters Used</h3>
-              <p class="text-2xl font-bold text-purple-400 mt-2">{{ search_form.data|dict2items|selectattr('1')|list|length - 1 }}</p>
+              <p class="text-2xl font-bold text-purple-400 mt-2">{{ search_form.data.values()|select('boolean')|list|length - 1 }}</p>
             </div>
           </div>
 
