@@ -321,35 +321,11 @@
                       <p class="text-sm text-gray-400">Issuing Officer</p>
                       <p class="text-lg font-semibold text-white">{{ ticket.admin.first_name }} {{ ticket.admin.last_name if ticket.admin.last_name else '' }}</p>
                     </div>
+                    <div>
+                      <p class="text-sm text-gray-400">Status</p>
+                      <p class="text-lg font-semibold text-white">{{ ticket.status }}</p>
+                    </div>
                   </div>
-                </div>
-
-                <!-- Edit Form -->
-                <div class="bg-gray-900/50 rounded-lg p-4">
-                  <form method="POST" class="space-y-4">
-                    <input type="hidden" name="ticket_id" value="{{ ticket.id }}">
-                    {{ edit_forms[ticket.id].hidden_tag() }}
-                    <div class="grid grid-cols-2 gap-4">
-                      <div>
-                        <label class="block text-gray-300 mb-2">{{ edit_forms[ticket.id].reason.label }}</label>
-                        {{ edit_forms[ticket.id].reason(class="w-full p-2 border rounded-lg bg-gray-800 text-white border-gray-600") }}
-                      </div>
-                      <div>
-                        <label class="block text-gray-300 mb-2">{{ edit_forms[ticket.id].amount.label }}</label>
-                        {{ edit_forms[ticket.id].amount(class="w-full p-2 border rounded-lg bg-gray-800 text-white border-gray-600") }}
-                      </div>
-                      <div class="col-span-2">
-                        <label class="block text-gray-300 mb-2">{{ edit_forms[ticket.id].status.label }}</label>
-                        {{ edit_forms[ticket.id].status(class="w-full p-2 border rounded-lg bg-gray-800 text-white border-gray-600") }}
-                      </div>
-                    </div>
-                    <div class="flex space-x-4">
-                      <button type="submit" class="upike-button text-white py-2 px-4 rounded-lg">Update</button>
-                      <form method="POST" action="{{ url_for('delete_ticket', ticket_id=ticket.id) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this ticket?');">
-                        <button type="submit" class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors">Delete</button>
-                      </form>
-                    </div>
-                  </form>
                 </div>
               </div>
             </div>
@@ -374,7 +350,7 @@
       </h2>
       <div id="appeal-section" class="space-y-6">
         <!-- Appeal Stats -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="bg-gray-800 rounded-xl p-4">
             <h3 class="text-gray-400 text-sm">Pending Appeals</h3>
             <p class="text-2xl font-bold text-white mt-2">{{ all_appeals|selectattr('status', 'equalto', 'pending')|list|length }}</p>
@@ -386,10 +362,6 @@
           <div class="bg-gray-800 rounded-xl p-4">
             <h3 class="text-gray-400 text-sm">Rejected Appeals</h3>
             <p class="text-2xl font-bold text-red-400 mt-2">{{ all_appeals|selectattr('status', 'equalto', 'rejected')|list|length }}</p>
-          </div>
-          <div class="bg-gray-800 rounded-xl p-4">
-            <h3 class="text-gray-400 text-sm">Average Response Time</h3>
-            <p class="text-2xl font-bold text-blue-400 mt-2">24h</p>
           </div>
         </div>
 
@@ -432,7 +404,7 @@
                 <!-- Ticket Details -->
                 <div class="bg-gray-900/50 rounded-lg p-4">
                   <h4 class="text-sm font-medium text-gray-400 mb-3">Ticket Information</h4>
-                  <div class="grid grid-cols-2 gap-4">
+                  <div class="space-y-4">
                     <div>
                       <p class="text-sm text-gray-400">Amount</p>
                       <p class="text-lg font-semibold text-white">${{ appeal.ticket.amount }}</p>
@@ -510,91 +482,6 @@
             </div>
           {% endfor %}
         </div>
-      </div>
-    </div>
-
-    <!-- Report Generation Section -->
-    <div class="upike-card p-6 rounded-2xl mb-6">
-      <h2 class="upike-subtitle text-3xl mb-6 flex items-center justify-between" onclick="toggleSection('report-section')">
-        <span>Generate Reports</span>
-        <span class="text-sm bg-orange-500 text-white px-3 py-1 rounded-full">Analytics</span>
-      </h2>
-      <div id="report-section" class="space-y-6">
-        <!-- Report Stats -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="bg-gray-800 rounded-xl p-4">
-            <h3 class="text-gray-400 text-sm">Available Reports</h3>
-            <p class="text-2xl font-bold text-white mt-2">4</p>
-          </div>
-          <div class="bg-gray-800 rounded-xl p-4">
-            <h3 class="text-gray-400 text-sm">Generated Today</h3>
-            <p class="text-2xl font-bold text-green-400 mt-2">{{ report_count|default(0) }}</p>
-          </div>
-          <div class="bg-gray-800 rounded-xl p-4">
-            <h3 class="text-gray-400 text-sm">Last Generated</h3>
-            <p class="text-2xl font-bold text-blue-400 mt-2">{{ last_report_date|default('Never')|truncate(19) }}</p>
-          </div>
-        </div>
-
-        <!-- Report Form -->
-        <div class="bg-gray-800 rounded-xl p-6">
-          <h3 class="text-lg font-semibold text-white mb-4">Generate New Report</h3>
-          <form method="POST" action="{{ url_for('admin_dashboard') }}" class="space-y-4">
-            {{ report_form.hidden_tag() }}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-gray-300 mb-2">{{ report_form.report_type.label }}</label>
-                {{ report_form.report_type(class="w-full p-3 border rounded-lg bg-gray-900 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300") }}
-              </div>
-              <div>
-                <label class="block text-gray-300 mb-2">{{ report_form.date_range.label }}</label>
-                {{ report_form.date_range(class="w-full p-3 border rounded-lg bg-gray-900 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300") }}
-              </div>
-            </div>
-            <button type="submit" name="action" value="generate_report" class="upike-button text-white font-semibold mt-4 w-full">
-              <div class="flex items-center justify-center space-x-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" clip-rule="evenodd" />
-                </svg>
-                <span>Generate Report</span>
-              </div>
-            </button>
-          </form>
-        </div>
-
-        <!-- Report Preview -->
-        {% if report_data %}
-          <div class="bg-gray-800 rounded-xl p-6">
-            <div class="flex items-center justify-between mb-6">
-              <h3 class="text-lg font-semibold text-white">Report Preview</h3>
-              <button onclick="window.print()" class="bg-[#F26925]/20 text-[#F26925] hover:bg-[#F26925] hover:text-white py-2 px-4 rounded-lg transition-colors flex items-center space-x-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" clip-rule="evenodd" />
-                </svg>
-                <span>Download PDF</span>
-              </button>
-            </div>
-            <div class="bg-gray-900/50 rounded-lg p-6 space-y-6">
-              <div class="text-center border-b border-gray-700 pb-6">
-                <h1 class="text-3xl font-bold text-[#F26925] mb-2">University of Pikeville</h1>
-                <h2 class="text-xl text-gray-300">{{ report_form.report_type.data }} Report</h2>
-                <p class="text-gray-400 mt-2">Generated on {{ now.strftime('%Y-%m-%d %H:%M') }}</p>
-              </div>
-              <div class="grid grid-cols-2 gap-4">
-                {% for key, value in report_data.items() %}
-                  <div class="bg-gray-800/50 rounded-lg p-4">
-                    <h4 class="text-sm text-gray-400 mb-2">{{ key }}</h4>
-                    <p class="text-lg font-semibold text-white">{{ value }}</p>
-                  </div>
-                {% endfor %}
-              </div>
-              <div class="text-center border-t border-gray-700 pt-6">
-                <p class="text-gray-400">Report generated by {{ current_user.first_name }} {{ current_user.last_name }}</p>
-                <p class="text-gray-500 text-sm mt-1">{{ current_user.role }} {% if current_user.officer_number %}#{{ current_user.officer_number }}{% endif %}</p>
-              </div>
-            </div>
-          </div>
-        {% endif %}
       </div>
     </div>
   </div>
