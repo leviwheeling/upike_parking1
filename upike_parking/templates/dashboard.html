@@ -111,28 +111,56 @@
     .animate-fade-in {
       animation: fadeIn 0.5s ease-out forwards;
     }
+    /* Modern Form Styling */
     .form-input {
-      @apply w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-700 
-             focus:border-[#F26925] focus:ring-2 focus:ring-[#F26925]/50 focus:outline-none 
-             shadow-md transition-all duration-300 ease-in-out;
+      @apply w-full p-3 rounded-xl bg-gray-900/50 text-white border border-gray-700/50 
+             focus:border-[#F26925] focus:ring-2 focus:ring-[#F26925]/30 focus:outline-none 
+             transition-all duration-300 ease-in-out;
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
     }
     .form-input:hover {
-      @apply border-[#F26925]/70 shadow-lg;
+      @apply border-[#F26925]/50;
+      box-shadow: 0 0 10px rgba(242, 105, 37, 0.2);
+    }
+    .form-input:focus {
+      box-shadow: 0 0 15px rgba(242, 105, 37, 0.3);
     }
     .form-input::placeholder {
-      @apply text-gray-400;
+      @apply text-gray-500 italic;
     }
     .form-label {
-      @apply font-medium text-gray-300 mb-1 block text-sm;
+      @apply font-medium text-gray-200 mb-2 block text-sm tracking-wide;
+      transition: color 0.3s ease;
+    }
+    .form-label:hover {
+      @apply text-[#F26925];
     }
     .field-icon {
-      @apply absolute right-3 top-9 text-gray-500;
+      @apply absolute right-4 top-10 text-gray-400 transition-all duration-300;
+    }
+    .field-icon:hover {
+      @apply text-[#F26925] scale-110;
     }
     .input-container {
-      @apply mb-4;
+      @apply mb-6 relative;
+      animation: fadeIn 0.5s ease-out forwards;
     }
     .form-section-title {
-      @apply text-sm uppercase tracking-wider text-gray-400 font-medium mb-3 border-b border-gray-800 pb-2;
+      @apply text-sm uppercase tracking-widest text-gray-400 font-semibold mb-4 pb-2 relative;
+    }
+    .form-section-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 50px;
+      height: 2px;
+      background: linear-gradient(90deg, #F26925, transparent);
+    }
+    /* Ensure the student ID section matches the modern look */
+    .student-id-container {
+      @apply p-4 bg-gray-900/30 border border-gray-800/50 rounded-xl mb-6 flex items-center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
   </style>
   <script>
@@ -236,7 +264,7 @@
           {{ form.hidden_tag() }}
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div class="col-span-full">
-              <div class="p-4 bg-gray-800/30 border border-gray-800/50 rounded-lg mb-6 flex items-center">
+              <div class="student-id-container">
                 <svg class="w-5 h-5 text-[#F26925] mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"></path>
                 </svg>
