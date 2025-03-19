@@ -77,11 +77,10 @@
   <div class="max-w-6xl mx-auto">
     <div class="upike-card p-8 rounded-2xl mb-8 text-center">
       <h1 class="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#F26925] to-[#e07a3a] animate-pulse">
-        UPike Admin Officer Portal
+        UPike Admin Portal
       </h1>
       <p class="text-xl mb-6">Welcome, {{ current_user.first_name }} {{ current_user.last_name }} {% if current_user.officer_number %}({{ current_user.role }} {{ current_user.officer_number }}){% else %}({{ current_user.role }}){% endif %}</p>
       <a href="{{ url_for('logout') }}" class="text-[#F26925] hover:text-[#e07a3a] underline transition duration-300">Logout</a>
-      <a href="{{ url_for('admin_dashboard') }}" class="upike-button text-white ml-4">Back to Admin Dashboard</a>
     </div>
 
     <!-- Flash Messages -->
@@ -96,6 +95,98 @@
         </div>
       {% endif %}
     {% endwith %}
+
+    <!-- Admin Management Section -->
+    <div class="upike-card p-6 rounded-2xl mb-6">
+      <h2 class="upike-subtitle text-3xl mb-6 flex items-center justify-between" onclick="toggleSection('admin-section')">
+        <span>Admin Management</span>
+        <span class="text-sm bg-orange-500 text-white px-3 py-1 rounded-full">{{ all_users|length }} Officers</span>
+      </h2>
+      <div id="admin-section" class="space-y-6">
+        <!-- Admin Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-gray-800 rounded-xl p-4">
+            <h3 class="text-gray-400 text-sm">Total Officers</h3>
+            <p class="text-2xl font-bold text-white mt-2">{{ all_users|length }}</p>
+          </div>
+          <div class="bg-gray-800 rounded-xl p-4">
+            <h3 class="text-gray-400 text-sm">Admin Officers</h3>
+            <p class="text-2xl font-bold text-green-400 mt-2">{{ all_users|selectattr('role', 'equalto', 'Admin Officer')|list|length }}</p>
+          </div>
+          <div class="bg-gray-800 rounded-xl p-4">
+            <h3 class="text-gray-400 text-sm">Parking Officers</h3>
+            <p class="text-2xl font-bold text-blue-400 mt-2">{{ all_users|selectattr('role', 'equalto', 'Parking Officer')|list|length }}</p>
+          </div>
+        </div>
+
+        <!-- Create Officer Form -->
+        <div class="bg-gray-800 rounded-xl p-6">
+          <h3 class="text-lg font-semibold text-white mb-4">Create New Officer</h3>
+          <form method="POST" class="space-y-4">
+            {{ user_form.hidden_tag() }}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-gray-300 mb-2">{{ user_form.username.label }}</label>
+                {{ user_form.username(class="w-full p-3 border rounded-lg bg-gray-900 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300") }}
+              </div>
+              <div>
+                <label class="block text-gray-300 mb-2">{{ user_form.password.label }}</label>
+                {{ user_form.password(class="w-full p-3 border rounded-lg bg-gray-900 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300") }}
+              </div>
+              <div>
+                <label class="block text-gray-300 mb-2">{{ user_form.role.label }}</label>
+                {{ user_form.role(class="w-full p-3 border rounded-lg bg-gray-900 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300") }}
+              </div>
+              <div>
+                <label class="block text-gray-300 mb-2">{{ user_form.officer_number.label }}</label>
+                {{ user_form.officer_number(class="w-full p-3 border rounded-lg bg-gray-900 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300") }}
+              </div>
+            </div>
+            <button type="submit" name="action" value="create_user" class="upike-button text-white font-semibold mt-4">
+              Create Officer
+            </button>
+          </form>
+        </div>
+
+        <!-- Officers List -->
+        <div class="grid grid-cols-1 gap-4">
+          {% for user in all_users %}
+            <div class="bg-gray-800 rounded-xl p-6 transition-all hover:bg-gray-700">
+              <div class="flex flex-col md:flex-row md:items-center justify-between">
+                <div class="flex items-center space-x-4">
+                  <div class="bg-gray-700 rounded-full w-12 h-12 flex items-center justify-center">
+                    <span class="text-2xl text-gray-300">{{ user.first_name[0] if user.first_name }}{{ user.last_name[0] if user.last_name }}</span>
+                  </div>
+                  <div>
+                    <h3 class="text-lg font-semibold text-white">{{ user.first_name }} {{ user.last_name }}</h3>
+                    <p class="text-gray-400 text-sm">{{ user.username }}</p>
+                  </div>
+                </div>
+                <div class="mt-4 md:mt-0 flex items-center space-x-4">
+                  <span class="px-4 py-2 rounded-full text-sm font-medium bg-blue-500/20 text-blue-300">
+                    {{ user.role }}
+                  </span>
+                  {% if user.officer_number %}
+                    <span class="px-4 py-2 rounded-full text-sm font-medium bg-purple-500/20 text-purple-300">
+                      #{{ user.officer_number }}
+                    </span>
+                  {% endif %}
+                  {% if user.username != current_user.username %}
+                    <form method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this officer?');">
+                      <input type="hidden" name="action" value="delete_user">
+                      <input type="hidden" name="user_id" value="{{ user.username }}">
+                      <button type="submit" class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors">
+                        Delete
+                      </button>
+                    </form>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
 
     <!-- Search Section -->
     <div class="upike-card p-6 rounded-2xl mb-6">
@@ -360,133 +451,13 @@
       </div>
     </div>
 
-    <!-- Student Management Section -->
-    <div class="upike-card p-6 rounded-2xl mb-6">
-      <h2 class="upike-subtitle text-3xl mb-6" onclick="toggleSection('student-management')">Student Management</h2>
-      <div id="student-management" class="">
-        <form method="POST" action="{{ url_for('admin_officer_dashboard') }}" class="space-y-4 mb-6">
-          {{ create_student_form.hidden_tag() }}
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-gray-300 mb-2">{{ create_student_form.email.label }}</label>
-              {{ create_student_form.email(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
-              {% for error in create_student_form.email.errors %}
-                <span class="text-red-400 text-sm">{{ error }}</span><br>
-              {% endfor %}
-            </div>
-            <div>
-              <label class="block text-gray-300 mb-2">{{ create_student_form.permit_number.label }}</label>
-              {{ create_student_form.permit_number(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
-              {% for error in create_student_form.permit_number.errors %}
-                <span class="text-red-400 text-sm">{{ error }}</span><br>
-              {% endfor %}
-            </div>
-            <div>
-              <label class="block text-gray-300 mb-2">{{ create_student_form.phone_number.label }}</label>
-              {{ create_student_form.phone_number(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
-              {% for error in create_student_form.phone_number.errors %}
-                <span class="text-red-400 text-sm">{{ error }}</span><br>
-              {% endfor %}
-            </div>
-            <div>
-              <label class="block text-gray-300 mb-2">{{ create_student_form.permit_type.label }}</label>
-              {{ create_student_form.permit_type(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
-              {% for error in create_student_form.permit_type.errors %}
-                <span class="text-red-400 text-sm">{{ error }}</span><br>
-              {% endfor %}
-            </div>
-            <div>
-              <label class="block text-gray-300 mb-2">{{ create_student_form.residence.label }}</label>
-              {{ create_student_form.residence(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300") }}
-              {% for error in create_student_form.residence.errors %}
-                <span class="text-red-400 text-sm">{{ error }}</span><br>
-              {% endfor %}
-            </div>
-            <div>
-              <label class="block text-gray-300 mb-2">{{ create_student_form.first_name.label }}</label>
-              {{ create_student_form.first_name(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300") }}
-              {% for error in create_student_form.first_name.errors %}
-                <span class="text-red-400 text-sm">{{ error }}</span><br>
-              {% endfor %}
-            </div>
-            <div>
-              <label class="block text-gray-300 mb-2">{{ create_student_form.last_name.label }}</label>
-              {{ create_student_form.last_name(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300") }}
-              {% for error in create_student_form.last_name.errors %}
-                <span class="text-red-400 text-sm">{{ error }}</span><br>
-              {% endfor %}
-            </div>
-            <div>
-              <label class="block text-gray-300 mb-2">{{ create_student_form.vehicle_color.label }}</label>
-              {{ create_student_form.vehicle_color(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
-              {% for error in create_student_form.vehicle_color.errors %}
-                <span class="text-red-400 text-sm">{{ error }}</span><br>
-              {% endfor %}
-            </div>
-            <div>
-              <label class="block text-gray-300 mb-2">{{ create_student_form.license_plate_number.label }}</label>
-              {{ create_student_form.license_plate_number(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
-              {% for error in create_student_form.license_plate_number.errors %}
-                <span class="text-red-400 text-sm">{{ error }}</span><br>
-              {% endfor %}
-            </div>
-            <div>
-              <label class="block text-gray-300 mb-2">{{ create_student_form.license_plate_state.label }}</label>
-              {{ create_student_form.license_plate_state(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
-              {% for error in create_student_form.license_plate_state.errors %}
-                <span class="text-red-400 text-sm">{{ error }}</span><br>
-              {% endfor %}
-            </div>
-            <div>
-              <label class="block text-gray-300 mb-2">{{ create_student_form.vehicle_year.label }}</label>
-              {{ create_student_form.vehicle_year(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
-              {% for error in create_student_form.vehicle_year.errors %}
-                <span class="text-red-400 text-sm">{{ error }}</span><br>
-              {% endfor %}
-            </div>
-            <div>
-              <label class="block text-gray-300 mb-2">{{ create_student_form.make.label }}</label>
-              {{ create_student_form.make(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
-              {% for error in create_student_form.make.errors %}
-                <span class="text-red-400 text-sm">{{ error }}</span><br>
-              {% endfor %}
-            </div>
-            <div>
-              <label class="block text-gray-300 mb-2">{{ create_student_form.model.label }}</label>
-              {{ create_student_form.model(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
-              {% for error in create_student_form.model.errors %}
-                <span class="text-red-400 text-sm">{{ error }}</span><br>
-              {% endfor %}
-            </div>
-            <div class="col-span-2">
-              <label class="block text-gray-300 mb-2">{{ create_student_form.password.label }}</label>
-              {{ create_student_form.password(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
-              {% for error in create_student_form.password.errors %}
-                <span class="text-red-400 text-sm">{{ error }}</span><br>
-              {% endfor %}
-            </div>
-            <div class="col-span-2">
-              <label class="block text-gray-300 mb-2">{{ create_student_form.confirm_password.label }}</label>
-              {{ create_student_form.confirm_password(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
-              {% for error in create_student_form.confirm_password.errors %}
-                <span class="text-red-400 text-sm">{{ error }}</span><br>
-              {% endfor %}
-            </div>
-          </div>
-          <button type="submit" name="action" value="create_student" class="upike-button text-white font-semibold mt-4 hover:shadow-lg transform hover:-translate-y-1 transition duration-300">
-            Create Student
-          </button>
-        </form>
-      </div>
-    </div>
-
     <!-- Appeal Management Section -->
     <div class="upike-card p-6 rounded-2xl mb-6">
-      <h2 class="upike-subtitle text-3xl mb-6 flex items-center justify-between" onclick="toggleSection('appeal-management')">
+      <h2 class="upike-subtitle text-3xl mb-6 flex items-center justify-between" onclick="toggleSection('appeal-section')">
         <span>Appeal Management</span>
         <span class="text-sm bg-orange-500 text-white px-3 py-1 rounded-full">{{ all_appeals|length }} Appeals</span>
       </h2>
-      <div id="appeal-management" class="space-y-6">
+      <div id="appeal-section" class="space-y-6">
         <!-- Appeal Stats -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div class="bg-gray-800 rounded-xl p-4">
@@ -618,116 +589,86 @@
       </div>
     </div>
 
-    <!-- Admin Management Section -->
-    <div class="upike-card p-6 rounded-2xl mb-6">
-      <h2 class="upike-subtitle text-3xl mb-6" onclick="toggleSection('admin-management')">Admin Management</h2>
-      <div id="admin-management" class="">
-        <form method="POST" action="{{ url_for('admin_officer_dashboard') }}" class="space-y-4 mb-6">
-          {{ user_form.hidden_tag() }}
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-gray-300 mb-2">{{ user_form.username.label }}</label>
-              {{ user_form.username(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
-              {% for error in user_form.username.errors %}
-                <span class="text-red-400 text-sm">{{ error }}</span><br>
-              {% endfor %}
-            </div>
-            <div>
-              <label class="block text-gray-300 mb-2">{{ user_form.role.label }}</label>
-              {{ user_form.role(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
-              {% for error in user_form.role.errors %}
-                <span class="text-red-400 text-sm">{{ error }}</span><br>
-              {% endfor %}
-            </div>
-            <div>
-              <label class="block text-gray-300 mb-2">{{ user_form.password.label }}</label>
-              {{ user_form.password(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
-              {% for error in user_form.password.errors %}
-                <span class="text-red-400 text-sm">{{ error }}</span><br>
-              {% endfor %}
-            </div>
-            <div>
-              <label class="block text-gray-300 mb-2">{{ user_form.officer_number.label }}</label>
-              {{ user_form.officer_number(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300") }}
-              {% for error in user_form.officer_number.errors %}
-                <span class="text-red-400 text-sm">{{ error }}</span><br>
-              {% endfor %}
-            </div>
-          </div>
-          <button type="submit" name="action" value="create_user" class="upike-button text-white font-semibold mt-4 hover:shadow-lg transform hover:-translate-y-1 transition duration-300">
-            Create User
-          </button>
-        </form>
-        <div class="overflow-x-auto">
-          <table class="w-full border-collapse text-gray-200 table-hover">
-            <thead>
-              <tr class="bg-gray-900">
-                <th class="p-4 text-left font-semibold">Username</th>
-                <th class="p-4 text-left font-semibold">Role</th>
-                <th class="p-4 text-left font-semibold">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for user in all_users %}
-                <tr class="border-b border-gray-700">
-                  <td class="p-4">{{ user.username }}</td>
-                  <td class="p-4">{{ user.role }}</td>
-                  <td class="p-4">
-                    <form method="POST" action="{{ url_for('admin_officer_dashboard') }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this user?');">
-                      <input type="hidden" name="user_id" value="{{ user.id }}">
-                      <button type="submit" name="action" value="delete_user" class="upike-button bg-red-600 text-white py-1 px-3 rounded-lg">Delete</button>
-                    </form>
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
     <!-- Report Generation Section -->
     <div class="upike-card p-6 rounded-2xl mb-6">
-      <h2 class="upike-subtitle text-3xl mb-6" onclick="toggleSection('report-section')">Generate Reports</h2>
-      <div id="report-section" class="">
-        <form method="POST" action="{{ url_for('admin_officer_dashboard') }}" class="space-y-4 mb-6">
-          {{ report_form.hidden_tag() }}
-          <div>
-            <label class="block text-gray-300 mb-2">{{ report_form.report_type.label }}</label>
-            {{ report_form.report_type(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
-            {% for error in report_form.report_type.errors %}
-              <span class="text-red-400 text-sm">{{ error }}</span><br>
-            {% endfor %}
+      <h2 class="upike-subtitle text-3xl mb-6 flex items-center justify-between" onclick="toggleSection('report-section')">
+        <span>Generate Reports</span>
+        <span class="text-sm bg-orange-500 text-white px-3 py-1 rounded-full">Analytics</span>
+      </h2>
+      <div id="report-section" class="space-y-6">
+        <!-- Report Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-gray-800 rounded-xl p-4">
+            <h3 class="text-gray-400 text-sm">Available Reports</h3>
+            <p class="text-2xl font-bold text-white mt-2">4</p>
           </div>
-          <div>
-            <label class="block text-gray-300 mb-2">{{ report_form.date_range.label }}</label>
-            {{ report_form.date_range(class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300", required="true") }}
-            {% for error in report_form.date_range.errors %}
-              <span class="text-red-400 text-sm">{{ error }}</span><br>
-            {% endfor %}
+          <div class="bg-gray-800 rounded-xl p-4">
+            <h3 class="text-gray-400 text-sm">Generated Today</h3>
+            <p class="text-2xl font-bold text-green-400 mt-2">{{ report_count|default(0) }}</p>
           </div>
-          <button type="submit" name="action" value="generate_report" class="upike-button text-white font-semibold mt-4 hover:shadow-lg transform hover:-translate-y-1 transition duration-300">
-            Generate Report
-          </button>
-        </form>
+          <div class="bg-gray-800 rounded-xl p-4">
+            <h3 class="text-gray-400 text-sm">Last Generated</h3>
+            <p class="text-2xl font-bold text-blue-400 mt-2">{{ last_report_date|default('Never')|truncate(19) }}</p>
+          </div>
+        </div>
+
+        <!-- Report Form -->
+        <div class="bg-gray-800 rounded-xl p-6">
+          <h3 class="text-lg font-semibold text-white mb-4">Generate New Report</h3>
+          <form method="POST" class="space-y-4">
+            {{ report_form.hidden_tag() }}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-gray-300 mb-2">{{ report_form.report_type.label }}</label>
+                {{ report_form.report_type(class="w-full p-3 border rounded-lg bg-gray-900 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300") }}
+              </div>
+              <div>
+                <label class="block text-gray-300 mb-2">{{ report_form.date_range.label }}</label>
+                {{ report_form.date_range(class="w-full p-3 border rounded-lg bg-gray-900 text-white border-gray-600 focus:ring-2 focus:ring-[#F26925] focus:outline-none transition duration-300") }}
+              </div>
+            </div>
+            <button type="submit" name="action" value="generate_report" class="upike-button text-white font-semibold mt-4 w-full">
+              <div class="flex items-center justify-center space-x-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" clip-rule="evenodd" />
+                </svg>
+                <span>Generate Report</span>
+              </div>
+            </button>
+          </form>
+        </div>
+
+        <!-- Report Preview -->
         {% if report_data %}
-          <div class="overflow-x-auto">
-            <table class="w-full border-collapse text-gray-200 table-hover">
-              <thead>
-                <tr class="bg-gray-900">
-                  <th class="p-4 text-left font-semibold">Metric</th>
-                  <th class="p-4 text-left font-semibold">Value</th>
-                </tr>
-              </thead>
-              <tbody>
+          <div class="bg-gray-800 rounded-xl p-6">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="text-lg font-semibold text-white">Report Preview</h3>
+              <button onclick="window.print()" class="bg-[#F26925]/20 text-[#F26925] hover:bg-[#F26925] hover:text-white py-2 px-4 rounded-lg transition-colors flex items-center space-x-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" clip-rule="evenodd" />
+                </svg>
+                <span>Download PDF</span>
+              </button>
+            </div>
+            <div class="bg-gray-900/50 rounded-lg p-6 space-y-6">
+              <div class="text-center border-b border-gray-700 pb-6">
+                <h1 class="text-3xl font-bold text-[#F26925] mb-2">University of Pikeville</h1>
+                <h2 class="text-xl text-gray-300">{{ report_form.report_type.data }} Report</h2>
+                <p class="text-gray-400 mt-2">Generated on {{ now.strftime('%Y-%m-%d %H:%M') }}</p>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
                 {% for key, value in report_data.items() %}
-                  <tr class="border-b border-gray-700">
-                    <td class="p-4">{{ key }}</td>
-                    <td class="p-4">{{ value }}</td>
-                  </tr>
+                  <div class="bg-gray-800/50 rounded-lg p-4">
+                    <h4 class="text-sm text-gray-400 mb-2">{{ key }}</h4>
+                    <p class="text-lg font-semibold text-white">{{ value }}</p>
+                  </div>
                 {% endfor %}
-              </tbody>
-            </table>
+              </div>
+              <div class="text-center border-t border-gray-700 pt-6">
+                <p class="text-gray-400">Report generated by {{ current_user.first_name }} {{ current_user.last_name }}</p>
+                <p class="text-gray-500 text-sm mt-1">{{ current_user.role }} {% if current_user.officer_number %}#{{ current_user.officer_number }}{% endif %}</p>
+              </div>
+            </div>
           </div>
         {% endif %}
       </div>
