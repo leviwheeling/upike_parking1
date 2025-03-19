@@ -446,7 +446,6 @@
               <tr class="bg-gray-900">
                 <th class="p-4 text-left font-semibold">Username</th>
                 <th class="p-4 text-left font-semibold">Role</th>
-                <th class="p-4 text-left font-semibold">Officer Number</th>
                 <th class="p-4 text-left font-semibold">Actions</th>
               </tr>
             </thead>
@@ -455,7 +454,6 @@
                 <tr class="border-b border-gray-700">
                   <td class="p-4">{{ user.username }}</td>
                   <td class="p-4">{{ user.role }}</td>
-                  <td class="p-4">{{ user.officer_number if user.officer_number else 'N/A' }}</td>
                   <td class="p-4">
                     <form method="POST" action="{{ url_for('admin_officer_dashboard') }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this user?');">
                       <input type="hidden" name="user_id" value="{{ user.id }}">

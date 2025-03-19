@@ -223,7 +223,6 @@
                 <th class="p-4 text-left font-semibold">Amount ($)</th>
                 <th class="p-4 text-left font-semibold">Status</th>
                 <th class="p-4 text-left font-semibold">Issuing Officer</th>
-                <th class="p-4 text-left font-semibold">Officer Number</th>
                 <th class="p-4 text-left font-semibold">Actions</th>
               </tr>
             </thead>
@@ -237,7 +236,6 @@
                   <td class="p-4">${{ "%.2f" % ticket.amount }}</td>
                   <td class="p-4">{{ ticket.status }}</td>
                   <td class="p-4">{{ ticket.admin.first_name }} {{ ticket.admin.last_name if ticket.admin.last_name else '' }}</td>
-                  <td class="p-4">{{ ticket.admin.officer_number if ticket.admin.officer_number else 'N/A' }}</td>
                   <td class="p-4 flex space-x-3">
                     <form method="POST" action="{{ url_for('delete_ticket', ticket_id=ticket.id) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this ticket?');">
                       <button type="submit" class="upike-button bg-red-600 text-white py-1 px-3 rounded-lg">Delete</button>

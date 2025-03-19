@@ -14,7 +14,7 @@ class AdminSignupForm(FlaskForm):
     last_name = StringField('Last Name', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
     role = SelectField('Role', choices=[('Admin', 'Admin'), ('Admin Officer', 'Admin Officer'), ('Parking Officer', 'Parking Officer')], validators=[DataRequired()])
-    officer_number = StringField('Officer Number', validators=[DataRequired()])
+    officer_number = StringField('Security Key', validators=[DataRequired()])
     submit = SubmitField('Sign Up')
 
 class AdminLoginForm(FlaskForm):
@@ -94,7 +94,7 @@ class UserForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=3, max=20)])
     role = SelectField('Role', choices=[('Admin', 'Admin'), ('Admin Officer', 'Admin Officer'), ('Parking Officer', 'Parking Officer')], validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
-    officer_number = StringField('Officer Number', validators=[Optional()])
+    officer_number = StringField('Security Key', validators=[Optional()])
     submit = SubmitField('Create User')
 
 class ReportForm(FlaskForm):
