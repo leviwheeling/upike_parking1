@@ -79,7 +79,7 @@
       <h1 class="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-[#F26925] to-[#e07a3a] animate-pulse">
         UPike Admin Portal
       </h1>
-      <p class="text-xl mb-6">Welcome, {{ current_user.first_name }} {{ current_user.last_name }} ({{ current_user.role }})</p>
+      <p class="text-xl mb-6">Welcome, {{ current_user.first_name if current_user.first_name else 'Admin' }} {{ current_user.last_name if current_user.last_name else '' }} ({{ current_user.role if current_user.role else 'Unknown Role' }})</p>
       <a href="{{ url_for('logout') }}" class="text-[#F26925] hover:text-[#e07a3a] underline transition duration-300">Logout</a>
     </div>
 
@@ -381,7 +381,7 @@
           </div>
           <div class="bg-gray-800 rounded-xl p-4">
             <h3 class="text-gray-400 text-sm">Total Amount</h3>
-            <p class="text-2xl font-bold text-blue-400 mt-2">${{ '%.2f'|format(all_tickets|sum(attribute='amount')) }}</p>
+            <p class="text-2xl font-bold text-blue-400 mt-2">${{ '%.2f'|format(all_tickets|sum(attribute='amount')) if all_tickets else '0.00' }}</p>
           </div>
         </div>
 
@@ -421,7 +421,7 @@
                   </div>
                   <div>
                     <h3 class="text-lg font-semibold text-white">Student #{{ ticket.student_id }}</h3>
-                    <p class="text-gray-400 text-sm">{{ ticket.issue_date.strftime('%Y-%m-%d %H:%M') }}</p>
+                    <p class="text-gray-400 text-sm">{{ ticket.issue_date.strftime('%Y-%m-%d %H:%M') if ticket.issue_date else 'No Date' }}</p>
                   </div>
                 </div>
                 <div class="mt-4 md:mt-0 flex items-center space-x-4">
@@ -528,8 +528,8 @@
                     <span class="text-2xl text-gray-300">#{{ appeal.id }}</span>
                   </div>
                   <div>
-                    <h3 class="text-lg font-semibold text-white">{{ appeal.student.first_name }} {{ appeal.student.last_name }}</h3>
-                    <p class="text-gray-400 text-sm">{{ appeal.student_email }}</p>
+                    <h3 class="text-lg font-semibold text-white">{{ appeal.student.first_name if appeal.student else 'Unknown' }} {{ appeal.student.last_name if appeal.student else '' }}</h3>
+                    <p class="text-gray-400 text-sm">{{ appeal.student_email if appeal.student_email else 'No Email' }}</p>
                   </div>
                 </div>
                 <div class="mt-4 md:mt-0">
@@ -548,15 +548,15 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <p class="text-sm text-gray-400">Amount</p>
-                    <p class="text-lg font-semibold text-white">${{ appeal.ticket.amount }}</p>
+                    <p class="text-lg font-semibold text-white">${{ '%.2f'|format(appeal.ticket.amount) if appeal.ticket else '0.00' }}</p>
                   </div>
                   <div>
                     <p class="text-sm text-gray-400">Issue Date</p>
-                    <p class="text-lg font-semibold text-white">{{ appeal.ticket.issue_date.strftime('%Y-%m-%d') }}</p>
+                    <p class="text-lg font-semibold text-white">{{ appeal.ticket.issue_date.strftime('%Y-%m-%d') if appeal.ticket and appeal.ticket.issue_date else 'No Date' }}</p>
                   </div>
                   <div>
                     <p class="text-sm text-gray-400">Reason</p>
-                    <p class="text-lg font-semibold text-white">{{ appeal.ticket.reason }}</p>
+                    <p class="text-lg font-semibold text-white">{{ appeal.ticket.reason if appeal.ticket else 'No reason provided' }}</p>
                   </div>
                 </div>
               </div>
@@ -565,7 +565,7 @@
               <div class="mb-4">
                 <h4 class="text-sm font-medium text-gray-400 mb-2">Appeal Reason</h4>
                 <div class="bg-gray-900/50 rounded-lg p-4">
-                  <p class="text-white whitespace-pre-wrap">{{ appeal.appeal_text }}</p>
+                  <p class="text-white whitespace-pre-wrap">{{ appeal.appeal_text if appeal.appeal_text else 'No appeal text provided' }}</p>
                 </div>
               </div>
 
@@ -606,7 +606,7 @@
                   <div class="flex items-center justify-between">
                     <div>
                       <p class="text-sm text-gray-400">Decision Date</p>
-                      <p class="text-lg font-semibold text-white">{{ appeal.decision_date.strftime('%Y-%m-%d %H:%M') }}</p>
+                      <p class="text-lg font-semibold text-white">{{ appeal.decision_date.strftime('%Y-%m-%d %H:%M') if appeal.decision_date else 'Pending' }}</p>
                     </div>
                     <div>
                       <p class="text-sm text-gray-400">Status</p>
@@ -644,11 +644,11 @@
           </div>
           <div class="bg-gray-800 rounded-xl p-4">
             <h3 class="text-gray-400 text-sm">Generated Today</h3>
-            <p class="text-2xl font-bold text-green-400 mt-2">{{ report_count|default(0) }}</p>
+            <p class="text-2xl font-bold text-green-400 mt-2">{{ report_count if report_count is defined else 0 }}</p>
           </div>
           <div class="bg-gray-800 rounded-xl p-4">
             <h3 class="text-gray-400 text-sm">Last Generated</h3>
-            <p class="text-2xl font-bold text-blue-400 mt-2">{{ last_report_date|default('Never')|truncate(19) }}</p>
+            <p class="text-2xl font-bold text-blue-400 mt-2">{{ last_report_date.strftime('%Y-%m-%d %H:%M') if last_report_date else 'Never' }}</p>
           </div>
         </div>
 
@@ -693,20 +693,26 @@
             <div class="bg-gray-900/50 rounded-lg p-6 space-y-6">
               <div class="text-center border-b border-gray-700 pb-6">
                 <h1 class="text-3xl font-bold text-[#F26925] mb-2">University of Pikeville</h1>
-                <h2 class="text-xl text-gray-300">{{ report_form.report_type.data }} Report</h2>
-                <p class="text-gray-400 mt-2">Generated on {{ now.strftime('%Y-%m-%d %H:%M') }}</p>
+                <h2 class="text-xl text-gray-300">{{ report_form.report_type.data if report_form and report_form.report_type.data else 'Unknown Report Type' }}</h2>
+                <p class="text-gray-400 mt-2">Generated on {{ now.strftime('%Y-%m-%d %H:%M') if now else 'Unknown Date' }}</p>
               </div>
               <div class="grid grid-cols-2 gap-4">
-                {% for key, value in report_data.items() %}
-                  <div class="bg-gray-800/50 rounded-lg p-4">
-                    <h4 class="text-sm text-gray-400 mb-2">{{ key }}</h4>
-                    <p class="text-lg font-semibold text-white">{{ value }}</p>
+                {% if report_data %}
+                  {% for key, value in report_data.items() %}
+                    <div class="bg-gray-800/50 rounded-lg p-4">
+                      <h4 class="text-sm text-gray-400 mb-2">{{ key|default('Unknown') }}</h4>
+                      <p class="text-lg font-semibold text-white">{{ value|default('N/A') }}</p>
+                    </div>
+                  {% endfor %}
+                {% else %}
+                  <div class="col-span-2 text-center py-8">
+                    <p class="text-gray-400">No report data available</p>
                   </div>
-                {% endfor %}
+                {% endif %}
               </div>
               <div class="mt-5 text-center">
-                <p class="text-white font-medium">Generated by {{ current_user.first_name }} {{ current_user.last_name }}</p>
-                <p class="text-gray-500 text-sm mt-1">{{ current_user.role }}</p>
+                <p class="text-white font-medium">Generated by {{ current_user.first_name if current_user.first_name else 'Admin' }} {{ current_user.last_name if current_user.last_name else '' }}</p>
+                <p class="text-gray-500 text-sm mt-1">{{ current_user.role if current_user.role else 'Unknown Role' }}</p>
               </div>
             </div>
           </div>
