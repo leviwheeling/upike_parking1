@@ -878,3 +878,67 @@ def admin_officer_dashboard():
                           report_form=report_form,
                           report_data=report_data,
                           now=get_est_time())
+
+@app.route('/ticket_student/<int:student_id>', methods=['POST'])
+@login_required
+def ticket_student(student_id):
+    if not isinstance(current_user, Admin):
+        flash('Unauthorized access. Only admins can issue tickets.', 'danger')
+        return redirect(url_for('landing'))
+    
+    student = db.session.get(Student, student_id)
+    if not student:
+        flash('Student not found.', 'danger')
+        return redirect(url_for('admin_dashboard' if current_user.role in ['Parking Officer', 'Admin Officer'] else 'admin_officer_dashboard'))
+    
+    reason = request.form.get('reason')
+    amount = request.form.get('amount')
+    
+    if not reason or not amount:
+        flash('Reason and amount are required.', 'warning')
+        return redirect(url_for('admin_dashboard' if current_user.role in ['Parking Officer', 'Admin Officer'] else 'admin_officer_dashboard'))
+    
+    try:
+        amount = float(amount)
+        ticket = Ticket(
+            student_id=student.id,
+            admin_username=current_user.username,
+            reason=reason,
+            amount=amount,
+            status='Pending'
+        )
+        db.session.add(ticket)
+        db.session.commit()
+        
+        # Handle media upload if present
+        if 'media' in request.files and request.files['media'].filename:
+            file = request.files['media']
+            if allowed_file(file.filename):
+                mime = magic.Magic(mime=True)
+                file_type = mime.from_buffer(file.read(1024))
+                file.seek(0)
+                if file_type in ['image/heic', 'image/jpeg', 'image/png']:
+                    media_data = file.read()
+                    # Create an appeal with the media as evidence
+                    appeal = Appeal(
+                        student_id=student.id,
+                        ticket_id=ticket.id,
+                        appeal_text=f"Media evidence submitted by {current_user.username}",
+                        status='admin_evidence',  # Special status for admin uploads
+                        media_data=media_data,
+                        media_type=file_type
+                    )
+                    db.session.add(appeal)
+                    db.session.commit()
+                else:
+                    flash('Invalid file type. Allowed: .heic, .jpg, .png, .jpeg', 'warning')
+            else:
+                flash('Invalid file extension. Allowed: .heic, .jpg, .png, .jpeg', 'warning')
+        
+        flash(f'Ticket issued successfully to {student.first_name} {student.last_name}!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        app.logger.error(f"Error issuing ticket to student {student_id}: {str(e)}")
+        flash(f'Error: {str(e)}', 'danger')
+    
+    return redirect(url_for('admin_dashboard' if current_user.role in ['Parking Officer', 'Admin Officer'] else 'admin_officer_dashboard'))
