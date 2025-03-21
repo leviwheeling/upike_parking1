@@ -111,63 +111,31 @@
     .animate-fade-in {
       animation: fadeIn 0.5s ease-out forwards;
     }
-    /* Modern Form Styling */
-    .form-input {
-      @apply w-full p-3 rounded-xl bg-gray-900 text-white border border-gray-700 
-             focus:border-[#F26925] focus:ring-2 focus:ring-[#F26925]/30 focus:outline-none 
-             transition-all duration-300 ease-in-out;
-    }
-
+    
     /* Handle browser autofill */
     input:-webkit-autofill,
     input:-webkit-autofill:hover,
     input:-webkit-autofill:focus,
     input:-webkit-autofill:active {
-      -webkit-box-shadow: 0 0 0 30px #1a1a1a inset !important;
+      -webkit-box-shadow: 0 0 0 30px #1f2937 inset !important;
       -webkit-text-fill-color: white !important;
       caret-color: white !important;
       border-color: #F26925 !important;
     }
 
-    .form-input:hover {
-      @apply border-[#F26925]/50;
-      box-shadow: 0 0 10px rgba(242, 105, 37, 0.2);
-    }
-    .form-input:focus {
-      box-shadow: 0 0 15px rgba(242, 105, 37, 0.3);
-    }
-    .form-input::placeholder {
-      @apply text-gray-500 italic;
-    }
-    .form-label {
-      @apply font-medium text-gray-200 mb-2 block text-sm tracking-wide;
-      transition: color 0.3s ease;
-    }
-    .form-label:hover {
-      @apply text-[#F26925];
-    }
-    .field-icon {
-      @apply absolute right-4 top-10 text-gray-400 transition-all duration-300;
-    }
-    .field-icon:hover {
-      @apply text-[#F26925] scale-110;
-    }
     .input-container {
       @apply mb-6 relative;
       animation: fadeIn 0.5s ease-out forwards;
     }
-    .form-section-title {
-      @apply text-sm uppercase tracking-widest text-gray-400 font-semibold mb-4 pb-2 relative;
+
+    .field-icon {
+      @apply absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 transition-all duration-300;
     }
-    .form-section-title::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 50px;
-      height: 2px;
-      background: linear-gradient(90deg, #F26925, transparent);
+
+    .field-icon:hover {
+      @apply text-[#F26925] scale-110;
     }
+
     /* Ensure the student ID section has a dark background */
     .student-id-container {
       @apply p-4 bg-gray-900 border border-gray-800/50 rounded-xl mb-6 flex items-center;
@@ -288,24 +256,24 @@
             </div>
             
             <div class="input-container">
-              <label class="form-label" for="{{ form.first_name.id }}">First Name</label>
-              {{ form.first_name(class="form-input", placeholder="Your first name") }}
+              <label class="text-sm font-medium text-gray-300 mb-2 block" for="{{ form.first_name.id }}">First Name</label>
+              {{ form.first_name(class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#F26925] focus:border-[#F26925] focus:outline-none transition-colors placeholder-gray-500", placeholder="Your first name") }}
               {% for error in form.first_name.errors %}
                 <span class="text-red-400 text-xs block mt-1">{{ error }}</span>
               {% endfor %}
             </div>
             
             <div class="input-container">
-              <label class="form-label" for="{{ form.last_name.id }}">Last Name</label>
-              {{ form.last_name(class="form-input", placeholder="Your last name") }}
+              <label class="text-sm font-medium text-gray-300 mb-2 block" for="{{ form.last_name.id }}">Last Name</label>
+              {{ form.last_name(class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#F26925] focus:border-[#F26925] focus:outline-none transition-colors placeholder-gray-500", placeholder="Your last name") }}
               {% for error in form.last_name.errors %}
                 <span class="text-red-400 text-xs block mt-1">{{ error }}</span>
               {% endfor %}
             </div>
             
             <div class="input-container">
-              <label class="form-label" for="{{ form.email.id }}">Email Address</label>
-              {{ form.email(class="form-input", placeholder="your.email@example.com") }}
+              <label class="text-sm font-medium text-gray-300 mb-2 block" for="{{ form.email.id }}">Email Address</label>
+              {{ form.email(class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#F26925] focus:border-[#F26925] focus:outline-none transition-colors placeholder-gray-500", placeholder="your.email@example.com") }}
               <span class="field-icon">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>
@@ -317,8 +285,8 @@
             </div>
             
             <div class="input-container">
-              <label class="form-label" for="{{ form.phone_number.id }}">Phone Number</label>
-              {{ form.phone_number(class="form-input", placeholder="(123) 456-7890") }}
+              <label class="text-sm font-medium text-gray-300 mb-2 block" for="{{ form.phone_number.id }}">Phone Number</label>
+              {{ form.phone_number(class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#F26925] focus:border-[#F26925] focus:outline-none transition-colors placeholder-gray-500", placeholder="(123) 456-7890") }}
               <span class="field-icon">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
@@ -330,8 +298,8 @@
             </div>
             
             <div class="input-container">
-              <label class="form-label" for="{{ form.password.id }}">Password</label>
-              {{ form.password(class="form-input", placeholder="Enter new password to change") }}
+              <label class="text-sm font-medium text-gray-300 mb-2 block" for="{{ form.password.id }}">Password</label>
+              {{ form.password(class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#F26925] focus:border-[#F26925] focus:outline-none transition-colors placeholder-gray-500", placeholder="Enter new password to change") }}
               <span class="field-icon">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
@@ -343,80 +311,80 @@
             </div>
             
             <div class="col-span-full mt-4">
-              <h3 class="form-section-title">Parking Information</h3>
+              <h3 class="text-sm uppercase tracking-widest text-gray-400 font-semibold mb-4 pb-2 border-b border-[#F26925]/20">Parking Information</h3>
             </div>
             
             <div class="input-container">
-              <label class="form-label" for="{{ form.permit_number.id }}">Permit Number</label>
-              {{ form.permit_number(class="form-input", placeholder="Your permit number") }}
+              <label class="text-sm font-medium text-gray-300 mb-2 block" for="{{ form.permit_number.id }}">Permit Number</label>
+              {{ form.permit_number(class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#F26925] focus:border-[#F26925] focus:outline-none transition-colors placeholder-gray-500", placeholder="Your permit number") }}
               {% for error in form.permit_number.errors %}
                 <span class="text-red-400 text-xs block mt-1">{{ error }}</span>
               {% endfor %}
             </div>
             
             <div class="input-container">
-              <label class="form-label" for="{{ form.permit_type.id }}">Permit Type</label>
-              {{ form.permit_type(class="form-input", placeholder="Select permit type") }}
+              <label class="text-sm font-medium text-gray-300 mb-2 block" for="{{ form.permit_type.id }}">Permit Type</label>
+              {{ form.permit_type(class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#F26925] focus:border-[#F26925] focus:outline-none transition-colors placeholder-gray-500") }}
               {% for error in form.permit_type.errors %}
                 <span class="text-red-400 text-xs block mt-1">{{ error }}</span>
               {% endfor %}
             </div>
             
             <div class="input-container">
-              <label class="form-label" for="{{ form.residence.id }}">Residence</label>
-              {{ form.residence(class="form-input", placeholder="Your residence") }}
+              <label class="text-sm font-medium text-gray-300 mb-2 block" for="{{ form.residence.id }}">Residence</label>
+              {{ form.residence(class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#F26925] focus:border-[#F26925] focus:outline-none transition-colors placeholder-gray-500", placeholder="Your residence") }}
               {% for error in form.residence.errors %}
                 <span class="text-red-400 text-xs block mt-1">{{ error }}</span>
               {% endfor %}
             </div>
             
             <div class="col-span-full mt-4">
-              <h3 class="form-section-title">Vehicle Information</h3>
+              <h3 class="text-sm uppercase tracking-widest text-gray-400 font-semibold mb-4 pb-2 border-b border-[#F26925]/20">Vehicle Information</h3>
             </div>
             
             <div class="input-container">
-              <label class="form-label" for="{{ form.make.id }}">Make</label>
-              {{ form.make(class="form-input", placeholder="Vehicle make") }}
+              <label class="text-sm font-medium text-gray-300 mb-2 block" for="{{ form.make.id }}">Make</label>
+              {{ form.make(class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#F26925] focus:border-[#F26925] focus:outline-none transition-colors placeholder-gray-500", placeholder="Vehicle make") }}
               {% for error in form.make.errors %}
                 <span class="text-red-400 text-xs block mt-1">{{ error }}</span>
               {% endfor %}
             </div>
             
             <div class="input-container">
-              <label class="form-label" for="{{ form.model.id }}">Model</label>
-              {{ form.model(class="form-input", placeholder="Vehicle model") }}
+              <label class="text-sm font-medium text-gray-300 mb-2 block" for="{{ form.model.id }}">Model</label>
+              {{ form.model(class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#F26925] focus:border-[#F26925] focus:outline-none transition-colors placeholder-gray-500", placeholder="Vehicle model") }}
               {% for error in form.model.errors %}
                 <span class="text-red-400 text-xs block mt-1">{{ error }}</span>
               {% endfor %}
             </div>
             
             <div class="input-container">
-              <label class="form-label" for="{{ form.vehicle_year.id }}">Year</label>
-              {{ form.vehicle_year(class="form-input", placeholder="Vehicle year") }}
+              <label class="text-sm font-medium text-gray-300 mb-2 block" for="{{ form.vehicle_year.id }}">Year</label>
+              {{ form.vehicle_year(class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#F26925] focus:border-[#F26925] focus:outline-none transition-colors placeholder-gray-500", placeholder="Vehicle year") }}
               {% for error in form.vehicle_year.errors %}
                 <span class="text-red-400 text-xs block mt-1">{{ error }}</span>
               {% endfor %}
             </div>
             
             <div class="input-container">
-              <label class="form-label" for="{{ form.vehicle_color.id }}">Color</label>
-              {{ form.vehicle_color(class="form-input", placeholder="Vehicle color") }}
+              <label class="text-sm font-medium text-gray-300 mb-2 block" for="{{ form.vehicle_color.id }}">Color</label>
+              {{ form.vehicle_color(class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#F26925] focus:border-[#F26925] focus:outline-none transition-colors placeholder-gray-500", placeholder="Vehicle color") }}
               {% for error in form.vehicle_color.errors %}
                 <span class="text-red-400 text-xs block mt-1">{{ error }}</span>
               {% endfor %}
             </div>
             
             <div class="input-container">
-              <label class="form-label" for="{{ form.license_plate_number.id }}">License Plate Number</label>
-              {{ form.license_plate_number(class="form-input", placeholder="License plate number") }}
+              <label class="text-sm font-medium text-gray-300 mb-2 block" for="{{ form.license_plate_number.id }}">License Plate Number</label>
+              {{ form.license_plate_number(class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#F26925] focus:border-[#F26925] focus:outline-none transition-colors placeholder-gray-500", placeholder="License plate number") }}
               {% for error in form.license_plate_number.errors %}
                 <span class="text-red-400 text-xs block mt-1">{{ error }}</span>
               {% endfor %}
             </div>
             
             <div class="input-container">
-              <label class="form-label" for="{{ form.license_plate_state.id }}">License Plate State</label>
-              {{ form.license_plate_state(class="form-input", placeholder="State") }}
+              <label class="text-sm font-medium text-gray-300 mb-2 block" for="{{ form.license_plate_state.id }}">License Plate State</label>
+              {{ form.license_plate_state(class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#F26925] focus:border-[#F26925] focus:outline-none transition-colors placeholder-gray-500", placeholder="State") }}
               {% for error in form.license_plate_state.errors %}
                 <span class="text-red-400 text-xs block mt-1">{{ error }}</span>
               {% endfor %}
